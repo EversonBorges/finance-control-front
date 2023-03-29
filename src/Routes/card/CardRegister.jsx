@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import Table from '../../components/Table' 
-import NewModal from './modal/NewModal'
+import TableCard from './table/TableCard' 
+import ModalCard from './modal/ModalCard'
 
 function CardRegister() {
 
   const [show, setShow] = useState(false)
-  let [edit, setedit] = useState()
+  let [edit, setEdit] = useState()
 
   const onClick = (event) => {
     setShow(true)
     edit =  event.id ? event : null
-    setedit(edit)
+    setEdit(edit)
   }
 
   const onClose = () => {
@@ -18,16 +18,16 @@ function CardRegister() {
   }
 
   return (
-    <div className='flex flex-col'>
-      <div className='flex bg-gradient-to-t from-gray-800 to-transparent shadow-gray-900 dark:shadow-gray-500 shadow-lg mt-5 py-7 items-center justify-around uppercase font-bold text-sm '>
+    <div className='container'>
+      <div className='header'>
         <h1 className='uppercase dark:text-gray-200 sm:text-2xl'>Adicionar cartão</h1>
         <div className='flex flex-col items-center'>
           <button onClick={onClick} className='button-form'>Novo cartão</button>
         </div>
       </div>
-      <div className='flex flex-col items-center mt-7 gap-3'>
-        <NewModal onClose={onClose} show={show} edit={edit}/>
-          <Table onClick={onClick} ></Table>
+      <div className='flex w-full flex-col items-center mt-20 gap-3 px-10'>
+        <ModalCard onClose={onClose} show={show} edit={edit}/>
+        <TableCard onClick={onClick} ></TableCard>
       </div>
     </div>
   )

@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom'
 
 function CardItem(props) {
 
-    const formaterReferenceDate = props.referenceDate.toLocaleDateString('pt-BR')
     return (
         <div className=' p-4  rounded-3xl bg-gradient-to-r from-gray-600  shadow-gray-900 dark:shadow-gray-500 shadow-lg sm:hover:scale-110'>
-            <Link to={`/transactions/${props.card.id}?referenceDate=${formaterReferenceDate}`}>
+            <Link to={`/transactions/${props.card.id}/${props.referenceDate}`}>
                     <div className='flex items-end dark:text-gray-200 justify-between uppercase border-gray-700  border-b-2 dark:border-gray-200 font-bold text-sm'>
                         <CreditCardIcon className='h-8' />
                         <span >{props.card.nameCard}</span>

@@ -20,7 +20,7 @@ const customStyles = {
     },
 };
 
-function NewModal(props) {
+function ModalCard(props) {
 
     const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC'
     customStyles.content.background = theme
@@ -120,4 +120,4 @@ function NewModal(props) {
     );
 }
 
-export default NewModal
+export default ModalCard

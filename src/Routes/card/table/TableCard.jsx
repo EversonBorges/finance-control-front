@@ -1,39 +1,14 @@
-import DataTable, { createTheme } from 'react-data-table-component';
+import DataTable  from 'react-data-table-component';
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
-import Switch from './Switch';
-import apiFetch from '../axios/config'
+import Switch from '../../../components/Switch';
+import apiFetch from '../../../axios/config'
+import ThemeService from '../../../utils/style';
 
-createTheme('dark', {
-    context: {
-        background: '#1E2734',
-        text: '#FFFFFF',
-    },
-    background: {
-        default: '#1E2734',
-    },
-});
+function TableCard(props) {
 
-//'#1E2734' : '#B3B7BC'
-
-createTheme('light', {
-    text: {
-        primary: '#000000',
-        secondary: '#000000',
-    },
-    background: {
-        default: '#B3B7BC',
-    },
-    context: {
-        background: '#B3B7BC',
-        text: '#000000',
-    },
-    divider: {
-        default: 'black',
-    },
-});
-
-function Table(props) {
+    ThemeService.themeDark
+    ThemeService.themeLight
 
     const columns = [
         {
@@ -82,7 +57,6 @@ function Table(props) {
     }
 
     const handleChange = async (values) => {
-       console.log("Values -> ", values);
 
             try {
                 await apiFetch.put(`cards/activateAndDeactivate/${values.id}`,{
@@ -118,16 +92,14 @@ function Table(props) {
             selectableRowsNoSelectAll
             selectableRowsSingle
             pagination={true}
-            paginationPerPage={5}
-            paginationRowsPerPageOptions={[2, 5, 10, 15]}
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[5, 10, 15, 20]}
             paginationComponentOptions={{ rowsPerPageText: 'Linhas por página:', rangeSeparatorText: 'de', selectAllRowsItemText: 'Todos' }}
             FixedHeader={true}
-            contextMessage={{ singular: '', plural: '', message: 'Cartão selecionado, você pode ativar ou desativar.' }}
-            progressPending={cards.length < 0}
             theme={theme}
             noContextMenu={true}
         />
     );
 };
 
-export default Table
+export default TableCard

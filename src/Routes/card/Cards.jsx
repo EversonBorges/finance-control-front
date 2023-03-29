@@ -5,7 +5,7 @@ import apiFetch from '../../axios/config'
 
 
 function Cards() {
-  
+
   const[referenceDate, setReferencedate] = useState(new Date)
 
   const handleChange = (selectedDate) => {
@@ -30,14 +30,14 @@ function Cards() {
   }, [])
 
   return (
-    <div className='flex flex-col'>
-      <div className='flex bg-gradient-to-t from-gray-800 to-transparent shadow-gray-900 dark:shadow-gray-500 shadow-lg mt-5 py-7 items-center justify-around uppercase font-bold text-sm '>
+    <div className='container '>
+      <div className='header'>
         <h1 className='uppercase dark:text-gray-200 sm:text-2xl'>Cartões</h1>
         <div className='flex flex-col items-center'>
-          <span className='dark:text-gray-200'>Data referência</span><Datepicker handleChange={handleChange} />
+          <div className='dark:text-gray-200 realtive'>Data referência</div><Datepicker handleChange={handleChange} />
         </div>
       </div>
-      <div className='flex flex-col items-center mt-7 gap-3'>
+      <div className='flex flex-col items-center mt-32 gap-3'>
         {cards.length === 0
           ?
           <div >

@@ -2,17 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ToggleTheme from './ToggleTheme'
 import { ClipboardDocumentListIcon, UserCircleIcon } from "@heroicons/react/24/solid"
-import { useState } from 'react'
 import Drop from './Drop'
 
 const Navbar = () => {
 
-    const [isActive, setIsActive] = useState(false)
-    const onClick = () => setIsActive(!isActive)
-
     return (
         <div>
-            <nav className='flex h-12 sm:h-20  bg-light-200 dark:bg-dark-200 justify-between items-center px-2'>
+            <nav className='flex h-12 sm:h-20  bg-light-200 dark:bg-dark-200 justify-between items-center px-2 fixed w-full'>
                 <div className='text-white opacity-75 hidden sm:block' >
                     <ul className='text-gray-400 gap-1 sm:flex hidden'>
                         <li className='sm:hover:scale-150'>
