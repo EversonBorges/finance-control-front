@@ -1,5 +1,6 @@
 const UtilServices = {
-    mascaraMoeda: mascaraMoeda
+    mascaraMoeda: mascaraMoeda,
+    showToast: showToast
 }
 
 export default UtilServices
@@ -20,3 +21,14 @@ function maskCurrency(valor, locale = 'pt-BR', currency = 'BRL') {
         currency
     }).format(valor)
 }
+
+function showToast(params, type) {
+    switch (type) {
+      case "success":
+        toast.success(params)
+        break;
+      case "warn":
+        toast.warn(params)
+        break;
+    }
+  }

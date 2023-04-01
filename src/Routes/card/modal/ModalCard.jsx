@@ -3,9 +3,6 @@ import Modal from 'react-modal';
 import { useForm } from 'react-hook-form'
 import { FormCardValidationResolver } from '../validations/FormCardValidation';
 import apiFetch from '../../../axios/config'
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Toast from '../../../components/Toast';
 
 const customStyles = {
     content: {
@@ -40,16 +37,18 @@ function ModalCard(props) {
         try {
             if (props.edit) {
                 await apiFetch.put(`cards/${props.edit.id}`, values)
-                toast.success("Editado com sucesso!");
-                setTimeout(() => {
-                    props.onClose()
-                  }, 4000);
+                props.showToast("Editado com sucesso!")
+                props.onClose()
             } else {
                 await apiFetch.post("cards", values)
-                toast.success("Adicionado com sucesso!");
+                props.showToast("Adicionado com sucesso!");
             }
+            props.getCards()
         } catch (error) {
-            console.log(error);
+            console.log(error.response);
+            error.response.data.map((obj)=>{
+                props.showToast(obj.message);
+            })
         }
     };
 
@@ -110,11 +109,6 @@ function ModalCard(props) {
                         <button onClick={props.onClose} className='button-form'>Fechar</button>
                     </div>
                 </form>
-                <div className="absolute top-48 left-48">
-                    <div>
-                        <Toast />
-                    </div>
-                </div>
             </Modal>
         </div>
     );

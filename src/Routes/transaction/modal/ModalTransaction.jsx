@@ -3,10 +3,6 @@ import Modal from 'react-modal';
 import { useForm } from 'react-hook-form'
 import { FormCardValidationResolver } from '../validations/FormCardValidation';
 import apiFetch from '../../../axios/config'
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Toast from '../../../components/Toast';
-import Select from 'react-select';
 import UtilServices from '../../../utils/UtilServices';
 
 const customStyles = {
@@ -22,58 +18,97 @@ const customStyles = {
     },
 };
 
-const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
-];
-
 function ModalTransaction(props) {
 
     const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC'
     customStyles.content.background = theme
     const formMethods = useForm({ resolver: FormCardValidationResolver })
     const { formState: { errors }, register, handleSubmit, reset, formState, setValue } = formMethods
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [sucess, setSucess] = useState()
+    const [cards, setCards] = useState([])
+    const [userCard, setUserCard] = useState([])
 
-    function alterVAlue() {
-        /*setValue("nameCard", props.edit ? props.edit.nameCard : "")
-        setValue("owner", props.edit ? props.edit.owner : "")
-        setValue("limitCard", props.edit ? props.edit.limitCard : "")
-        setValue("bestDayBuy", props.edit ? props.edit.bestDayBuy : "")
-        setValue("duoDate", props.edit ? props.edit.duoDate : "")*/
+    function setValueEdit() {
+        setValue("id", props.edit && props.edit.idTransaction)
+        setValue("referenceDate", props.edit && props.edit.referenceDate)
+        setValue("userCardId", props.edit && props.edit.userCardId)
+        setValue("purchaseDescription", props.edit && props.edit.purchaseDescription)
+        setValue("price", props.edit && props.edit.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }))
+        setValue("installmentsTotal", props.edit && props.edit.installmentsTotal)
     }
 
-    const onSubmit = (values) => {
+    const onSubmit = async (values) => {
 
-        alert("Teste")
+        values.referenceDate = new Date(values.referenceDate).toLocaleDateString('pt-BR')
+        values.price = values.price.replace(".", "").replace(",", ".").slice(3)
 
-        console.log("Values ->", values);
-
-        /*try {
+        try {
             if (props.edit) {
-                await apiFetch.put(`cards/${props.edit.id}`, values)
-                toast.success("Editado com sucesso!");
-                setTimeout(() => {
-                    props.onClose()
-                }, 4000);
+                await apiFetch.put("transactions", values)
+                props.onClose()
+                props.showToast("Editado com sucesso!", "success")
             } else {
-                await apiFetch.post("cards", values)
-                toast.success("Adicionado com sucesso!");
+                await apiFetch.post("transactions", values)
+                props.showToast("Adicionado com sucesso!", "success")
             }
+            setSucess(true)
+            props.getTransactions()
         } catch (error) {
             console.log(error);
-        }*/
+            error?.response?.data.map((obj) => {
+                props.showToast(obj.message, "warn");
+            })
+        }
     };
 
-    useEffect(() => {
-        if (formState.isSubmitSuccessful) {
-            reset(
-                { nameCard: "", owner: "", limitCard: "", bestDayBuy: "", duoDate: "", }
-            );
+    const getCards = async () => {
+        try {
+            const response = await apiFetch.get("cards/listCardActive")
+            const content = response.data
+            setCards(content)
+        } catch (error) {
+            console.log(error);
         }
-        alterVAlue()
+    }
+
+    const getUserCards = async () => {
+        try {
+            const response = await apiFetch.get("user-card/allActive")
+            const content = response.data
+            setUserCard(content)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getUserCards()
+        getCards()
+    }, [])
+
+    useEffect(() => {
+        if (sucess) {
+            reset(
+                { referenceDate: "", userCardId: "", purchaseDescription: "", price: "", installmentsTotal: "", }
+            );
+            setSucess(false)
+        }
+
+        if (props.isEdit) {
+            setValueEdit()
+        }
+
     }, [formState, reset]);
+
+    const closeModal = () => {
+        reset(
+                { referenceDate: "", userCardId: "", purchaseDescription: "", price: "", installmentsTotal: "", }
+            );
+        props.onClose()
+    }
+
+    let classFlex = props.edit ? 'flex gap-4 items-center' : ""
+    let disableClass = props.edit ? 'bg-gray-400' : ""
 
     return (
         <div>
@@ -87,20 +122,37 @@ function ModalTransaction(props) {
                     <h1>{props.edit ? "Editar transação" : "Adicionar nova transação"}</h1>
                     <label htmlFor="idCard"></label>
                     <input {...register('idCard')} type="hidden" value={props.id} />
+                    <div className={classFlex}>
+                        {props.edit &&
+                            <div className='block mb-2 w-1/2'>
+                                <label htmlFor="idCard">Cartão</label>
+                                <select {...register('idCard')} className="w-full rounded-md">
+                                    {
+                                        cards.map((opt) => {
+                                            return <option key={opt.id} value={opt.id}>{opt.nameCard}</option>
+                                        })
+                                    }
 
-                    <label htmlFor="userCard">Usuário cartão</label>
-                    <select {...register('userCard')} className="w-full rounded-md">
-                        <option value="">--Selecione um usuário do cartão--</option>
-                        {
-                            options.map((opt) => {
-                               return <option value={opt.value}>{opt.label}</option>
-                            })
+                                </select>
+                            </div>
                         }
-                        
-                    </select>
-                    {errors?.userCard?.message && (
-                        <p className='error-text'>{errors?.userCard?.message}</p>
-                    )}
+
+                        <div className='block mb-2'>
+                            <label htmlFor="userCardId">Usuário cartão</label>
+                            <select {...register('userCardId')} className="w-full rounded-md">
+                                <option value="">Selecione um usuário do cartão</option>
+                                {
+                                    userCard.map((opt) => {
+                                        return <option key={opt.id} value={opt.id}>{opt.nameUser}</option>
+                                    })
+                                }
+
+                            </select>
+                            {errors?.userCardId?.message && (
+                                <p className='error-text'>{errors?.userCardId?.message}</p>
+                            )}
+                        </div>
+                    </div>
 
                     <label htmlFor="purchaseDescription">Descrição compra</label>
                     <input {...register('purchaseDescription')} type="text" />
@@ -110,36 +162,31 @@ function ModalTransaction(props) {
                     <div className='grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
                         <div>
                             <label htmlFor="referenceDate">Data compra</label>
-                            <input {...register('referenceDate')} type="date"></input>
+                            <input {...register('referenceDate')} type="date" className={disableClass} disabled={props.edit}></input>
                             {errors?.referenceDate?.message && (
                                 <p className='error-text'>{errors?.referenceDate?.message}</p>
                             )}
                         </div>
                         <div>
                             <label htmlFor="price">Valor compra</label>
-                            <input {...register('price')} type="text" onInput={UtilServices.mascaraMoeda} />
+                            <input {...register('price')} type="text" onInput={UtilServices.mascaraMoeda} className={disableClass} disabled={props.edit} />
                             {errors?.price?.message && (
                                 <p className='error-text'>{errors?.price?.message}</p>
                             )}
                         </div>
                         <div>
-                            <label htmlFor="installments">Parcelas</label>
-                            <input {...register('installments')} type="number" />
-                            {errors?.installments?.message && (
-                                <p className='error-text'>{errors?.installments?.message}</p>
+                            <label htmlFor="installmentsTotal">Parcelas</label>
+                            <input {...register('installmentsTotal')} type="number" className={disableClass} disabled={props.edit} />
+                            {errors?.installmentsTotal?.message && (
+                                <p className='error-text'>{errors?.installmentsTotal?.message}</p>
                             )}
                         </div>
                     </div>
                     <div className="flex  justify-center gap-10 mt-5">
                         <button type='submit' className='button-form'>Salvar</button>
-                        <button onClick={props.onClose} className='button-form'>Fechar</button>
+                        <button onClick={closeModal} className='button-form'>Fechar</button>
                     </div>
                 </form>
-                <div className="absolute top-48 left-48">
-                    <div>
-                        <Toast />
-                    </div>
-                </div>
             </Modal>
         </div>
     );

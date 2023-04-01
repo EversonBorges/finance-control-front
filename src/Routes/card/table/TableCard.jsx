@@ -43,33 +43,19 @@ function TableCard(props) {
         }
     ];
 
-    const [cards, setCards] = useState([])
     const [theme, setTheme] = useState()
     
-    const getCards = async () => {
-        try {
-            const response = await apiFetch.get("cards")
-            const content = response.data.content
-            setCards(content)
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     const handleChange = async (values) => {
 
             try {
                 await apiFetch.put(`cards/activateAndDeactivate/${values.id}`,{
                     active: !values.active
                 })
+                props.getCards()
             } catch (error) {
                 console.log(error);
             }
     }
-
-    useEffect(() => {
-        getCards()
-    }, [cards])
 
 
     useEffect(() => {
@@ -79,7 +65,7 @@ function TableCard(props) {
     return (
         <DataTable
             columns={columns}
-            data={cards}
+            data={props.cards}
             title="Cartões"
             highlightOnHover={true}
             pointerOnHover={true}
