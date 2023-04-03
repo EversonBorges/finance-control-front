@@ -1,7 +1,7 @@
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-const FormCardValidationSchema = yup.object({
+const FormTransactionValidationSchema = yup.object({
     referenceDate: yup.date().required('Nome do cartão não pode ser vazio'),
     purchaseDescription: yup.string().required('Nome do cartão não pode ser vazio'),
     userCardId: yup.string().required('Nome do cartão não pode ser vazio'),
@@ -10,4 +10,4 @@ const FormCardValidationSchema = yup.object({
                 .positive('Limite do cartão deve ser um numero positivo'),
 })
 
-export const FormCardValidationResolver = yupResolver(FormCardValidationSchema)
+export const FormTransactionValidationResolver = yupResolver(FormTransactionValidationSchema)

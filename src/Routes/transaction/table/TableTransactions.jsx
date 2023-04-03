@@ -88,7 +88,7 @@ function TableTransactions(props) {
             selectableRowsSingle
             pagination={true}
             paginationPerPage={10}
-            paginationRowsPerPageOptions={[5, 10, 15, 20, 50]}
+            paginationRowsPerPageOptions={[5, 10, 15, 20]}
             paginationComponentOptions={{ rowsPerPageText: 'Linhas por página:', rangeSeparatorText: 'de', selectAllRowsItemText: 'Todos' }}
             FixedHeader={true}
             theme={theme}

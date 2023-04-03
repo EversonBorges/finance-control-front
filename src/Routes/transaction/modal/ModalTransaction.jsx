@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form'
-import { FormCardValidationResolver } from '../validations/FormCardValidation';
+import { FormTransactionValidationResolver } from '../validations/FormTransactionValidation';
 import apiFetch from '../../../axios/config'
 import UtilServices from '../../../utils/UtilServices';
 
@@ -22,7 +22,7 @@ function ModalTransaction(props) {
 
     const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC'
     customStyles.content.background = theme
-    const formMethods = useForm({ resolver: FormCardValidationResolver })
+    const formMethods = useForm({ resolver: FormTransactionValidationResolver })
     const { formState: { errors }, register, handleSubmit, reset, formState, setValue } = formMethods
     const [sucess, setSucess] = useState()
     const [cards, setCards] = useState([])
