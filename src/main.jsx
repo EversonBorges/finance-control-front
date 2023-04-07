@@ -20,7 +20,7 @@ const router = createBrowserRouter([{
         element: <CardRegister/>
       },
       {
-        path: "/transactions/:id/:referenceDate",
+        path: "/transactions/:id",
         element: <Transaction/>
       }
     ]

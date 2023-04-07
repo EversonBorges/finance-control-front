@@ -1,6 +1,6 @@
 import DataTable  from 'react-data-table-component';
-import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
-import { useEffect, useState } from 'react';
+import { ChevronDoubleDownIcon, FunnelIcon, XCircleIcon } from '@heroicons/react/24/solid'
+import { useEffect, useState, useMemo } from 'react';
 import Switch from '../../../components/Switch';
 import ThemeService from '../../../utils/style';
 
@@ -23,6 +23,35 @@ function TableUserCard(props) {
     ];
 
     const [theme, setTheme] = useState()
+    const [filterText, setFilterText] = useState('');
+    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+
+    const filteredItems = props.userCard.filter(
+        item => item.nameUser && item.nameUser.toLowerCase().includes(filterText.toLowerCase()),
+    );
+
+    const subHeaderComponentMemo = useMemo(() => {
+        const handleClear = () => {
+            if (filterText) {
+                setResetPaginationToggle(!resetPaginationToggle);
+                setFilterText('');
+            }
+        };
+
+        return (
+            <div className='flex gap-1 text-gray-900 dark:text-gray-200'>
+                <FunnelIcon className='h-6' />
+                <input 
+                        value={filterText} 
+                        onChange={e => setFilterText(e.target.value)} 
+                        placeholder='Filtrar por usuário'
+                        className='h-6  text-black' 
+                    >
+                </input> 
+                <XCircleIcon className='cursor-pointer h-6' onClick={handleClear}/>
+            </div>
+        );
+    }, [filterText, resetPaginationToggle]);
     
     useEffect(() => {
         setTheme(document.getElementsByClassName('dark').length === 1 ? 'dark' : 'light')
@@ -34,8 +63,7 @@ function TableUserCard(props) {
     return (
         <DataTable
             columns={columns}
-            title="USUÁRIOS CARTÃO"
-            data={props.userCard}
+            data={filteredItems}
             highlightOnHover={true}
             pointerOnHover={true}
             dense={true}
@@ -53,6 +81,8 @@ function TableUserCard(props) {
             FixedHeader={true}
             theme={theme}
             noContextMenu={true}
+            subHeader={true}
+            subHeaderComponent={subHeaderComponentMemo}
         />
     );
 };
