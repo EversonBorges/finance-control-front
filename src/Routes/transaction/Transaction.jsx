@@ -104,12 +104,9 @@ function Transaction() {
       <div>
         <Toast />
       </div>
-      <div className='header'>
-        <h1 className='uppercase dark:text-gray-200 sm:text-2xl'>Adicionar transação</h1>
-          <div className='flex flex-col items-center'>
-          <label className='dark:text-gray-200 mb-1'>Data referencia</label>
-            <input type='date' defaultValue={referenceDate} onChange={handleChange} className=' w-36 rounded-md border-2  py-0.5 border-black' />
-          </div>
+      <div >
+        <h6 className='uppercase dark:text-gray-200 sm:text-sm'>Adicionar transação</h6>
+          
         <div className='flex items-center gap-3'>
           <button onClick={onClick} className='button-form py-1'>Nova transação</button>
           <button onClick={onClickModalUser} className='button-form py-1'>Registrar usuário</button>

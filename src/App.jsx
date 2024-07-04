@@ -1,12 +1,13 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import {SummaryProvider} from './contexts/SummaryContext'
 
 function App() {
   return (
-    <div >
+    <SummaryProvider>
       <Navbar />
       <Outlet />
-    </div>
+    </SummaryProvider>
   )
 }
 

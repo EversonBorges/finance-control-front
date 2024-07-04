@@ -1,6 +1,8 @@
 const UtilServices = {
     mascaraMoeda: mascaraMoeda,
-    showToast: showToast
+    showToast: showToast,
+    formatterDate: formatterDate,
+    getListMonths: getListMonths
 }
 
 export default UtilServices
@@ -32,3 +34,18 @@ function showToast(params, type) {
         break;
     }
   }
+
+  function formatterDate(dt){
+    return `${dt.substring(8,10)}/${dt.substring(5,7)}`
+ }
+
+function getListMonths() {
+  return [
+    {description: 'Janeiro', cod: 1 }, {description: 'Fevereiro', cod: 2}, {description: 'Março', cod: 3 }, 
+    {description: 'Abril', cod: 4 }, {description: 'Maio', cod: 5}, {description: 'Junho', cod: 6}, 
+    {description: 'Julho', cod: 7}, {description: 'Agosto', cod: 8}, {description: 'Setembro', cod: 9}, 
+    {description: 'Outubro', cod: 10}, {description: 'Novembro', cod: 11}, {description: 'Dezembro', cod: 12}
+  ]
+}
+
+ //toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })

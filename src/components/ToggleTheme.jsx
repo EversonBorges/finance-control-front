@@ -15,9 +15,9 @@ const ToggleTheme = () => {
         pageClasses.toggle('dark')
     }
 
-    return <div className="sm:hover:scale-150">
-        <MoonIcon className="icon-toggle-theme dark:hidden " onClick={toggle} />
-        <SunIcon className="icon-toggle-theme hidden dark:block" onClick={toggle} />
+    return <div className="sm:hover:scale-150 ">
+        <MoonIcon className="icon-toggle-theme dark:hidden text-gray-900" onClick={toggle} />
+        <SunIcon className="icon-toggle-theme hidden dark:block text-gray-100" onClick={toggle} />
     </div>
 }
 

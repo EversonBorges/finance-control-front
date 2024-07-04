@@ -3,35 +3,36 @@
 @tailwind utilities;
 
 @layer components {
-h1 {
-    @apply text-gray-900 uppercase font-bold text-xl dark:text-gray-100;
-}
+    h1 {
+        @apply uppercase font-bold text-xl;
+    }
 
     .button-link {
-        @apply font-bold  text-gray-100 px-2 uppercase;
+        @apply font-bold  px-2;
     }
 
     .hideMenuNav {
-       @apply hidden;
+        @apply hidden;
     }
 
-    .showMenuNav { @apply absolute w-full h-48 top-0 right-0 flex flex-col justify-between items-start;
+    .showMenuNav { 
+        @apply absolute w-full h-48 top-0 right-0 flex flex-col justify-between items-start;
     }
 
     .icon-toggle-theme {
-        @apply h-5 fill-gray-100 sm:h-8 block opacity-75 cursor-pointer;
+        @apply h-5  sm:h-8 block  cursor-pointer;
     }
 
     .button-form {
-        @apply dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200  uppercase sm:hover:scale-110 px-3 py-1 rounded-2xl;
+        @apply dark:text-gray-200 border-2 border-gray-900 dark:border-gray-200 uppercase sm:hover:scale-110 px-3 py-1 rounded-2xl;
     }
 
     .container {
         @apply max-w-full m-auto pt-20 flex flex-col;
     }
 
-    .form label{
-        @apply  block py-2 uppercase font-semibold dark:text-gray-100;
+    .form label {
+        @apply block py-2 uppercase font-semibold dark:text-gray-100;
     }
 
     .form input {
@@ -41,11 +42,25 @@ h1 {
     .form h1 {
         @apply text-gray-900 uppercase font-bold text-xl border-b-2 border-black dark:border-white text-center pb-1 mb-4 dark:text-gray-100;
     }
+
     .error-text {
         @apply text-red-500 text-sm py-1;
     }
 
     .header {
         @apply flex fixed w-full bg-gray-300 dark:bg-gray-800 shadow-gray-900 dark:shadow-gray-500 shadow-lg py-4 items-center justify-around uppercase font-bold text-sm rounded-b-full;
+    }
+
+    /* Adicionando CSS personalizado */
+    .equal-height {
+        @apply flex flex-col h-full;
+    }
+
+    .equal-height > div {
+        @apply flex-1 overflow-y-auto;
+    }
+
+    .fixed-height {
+        @apply h-full overflow-y-auto;
     }
 }

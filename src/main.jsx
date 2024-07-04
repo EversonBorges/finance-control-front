@@ -4,9 +4,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-import CardRegister from './Routes/card/CardRegister'
+import CardRegister from './Routes/summary/CardRegister'
 import Transaction from './Routes/transaction/Transaction'
-import Cards from './Routes/card/Cards'
+import Cards from './Routes/summary/Summary'
+import MonthDetails from './Routes/summary/item/MonthDetails.jsx'
 
 const router = createBrowserRouter([{
     element: <App />,
@@ -22,6 +23,10 @@ const router = createBrowserRouter([{
       {
         path: "/transactions/:id",
         element: <Transaction/>
+      },
+      {
+        path: "/month-details/:month/:year",
+        element: <MonthDetails/>
       }
     ]
   }
