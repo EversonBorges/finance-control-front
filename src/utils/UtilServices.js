@@ -2,7 +2,8 @@ const UtilServices = {
     mascaraMoeda: mascaraMoeda,
     showToast: showToast,
     formatterDate: formatterDate,
-    getListMonths: getListMonths
+    getListMonths: getListMonths,
+    sumCurrencies: sumCurrencies
 }
 
 export default UtilServices
@@ -48,4 +49,18 @@ function getListMonths() {
   ]
 }
 
- //toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function parseCurrency(value) {
+  value = value.replace("R$", "").trim();
+  return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+}
+
+function formatCurrency(value) {
+  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function sumCurrencies(currency1, currency2) {
+  const num1 = parseCurrency(currency1);
+  const num2 = parseCurrency(currency2);
+  const sum = num1 + num2;
+  return formatCurrency(sum);
+}

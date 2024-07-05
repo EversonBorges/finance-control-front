@@ -6,7 +6,7 @@ function Month(props) {
     var month = props.month
 
     return (
-        <div className=' rounded-lg bg-gray-300 dark:bg-dark-200 shadow-gray-900 dark:shadow-gray-500 shadow-sm sm:hover:scale-110'>
+        <div className=' rounded-lg bg-gray-300 dark:bg-dark-200 shadow-gray-900 dark:shadow-gray-500 shadow-sm sm:hover:scale-105'>
             <Link to={`/month-details/${month.mes.cod}/${props.year}`}>
                 <>
                     <h5 className='text-center uppercase text-black dark:text-white font-extrabold'>{month.mes.description}</h5>

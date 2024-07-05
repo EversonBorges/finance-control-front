@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 
 function CardBudgeted({ header, obj, bgColor}) {
-
-    console.log("Obj -> ",typeof obj);
   
+    const [totalBudgeted, setTotalBudgeted] = useState("")
+    const [totalAccomplished, setTotalAccomplished] = useState("")
     const [localObj, setLocalObj] = useState([])
 
     useEffect(() => {
-        if (Array.isArray(obj)) {
-            setLocalObj(obj);
+        if (Array.isArray(obj.array)) {
+            setLocalObj(obj.array);
         } else {
             setLocalObj([]);
         }
+        setTotalAccomplished(obj.totalAccomplished)
+        setTotalBudgeted(obj.totalBudgeted)
     }, [obj]);
 
     return (
@@ -31,11 +33,14 @@ function CardBudgeted({ header, obj, bgColor}) {
                           localObj && localObj.map((element, index) => (
                                     <tr key={index}>
                                         <td class="text-black px-1 w-40">{element.description}</td>
-                                        <td class="text-black px-1 text-right">{element.sum}</td>
-                                        <td class="text-black px-1 text-right">{element.sum}</td>
+                                        <td class="text-black px-1 text-right">{element.accomplished}</td>
+                                        <td class="text-black px-1 text-right">{element.budgeted}</td>
                                     </tr>
                             ))
                     }
+                     <td class="text-black pt-2 px-1 font-bold text-sm">Total:</td>
+                     <td class="text-black pt-2 px-1 text-right w-40 font-bold ">{totalAccomplished}</td>
+                     <td class="text-black pt-2 px-1 text-right w-40 font-bold ">{totalBudgeted}</td>
                 </tbody>
             </table>
                 <Link to={"/"} className="text-black mt-auto mb-1 sm:hover:scale-125 button-link">Detalhar</Link>
