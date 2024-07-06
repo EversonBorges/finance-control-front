@@ -1,7 +1,7 @@
 import DataTable from 'react-data-table-component';
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState, useMemo } from 'react';
-import ThemeService from '../../../utils/style';
+import ThemeService from '../../../../../utils/style';
 import SubHeaderTable from './SubHeaderTable';
 
 function TableTransactions(props) {

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import SummaryYear from './item/SummaryYear';
+import SummaryYear from './summaryYear/SummaryYear';
 import apiFetch from '../../axios/config';
 import 'react-toastify/dist/ReactToastify.css';
-import SummaryMonth from './item/SummaryMonth';
+import SummaryMonth from '../summary/summaryMonth/SummaryMonth';
 import { SummaryContext } from '../../contexts/SummaryContext';
-import SummaryYearSkeleton from '../../components/SummaryYearSkeleton';
+import SummaryYearSkeleton from '../summary/summaryYear/SummaryYearSkeleton';
 
 function Summary() {
   const { selectedYear, setSelectedYear, summaryYear, setSummaryYear, summaryMonth, setSummaryMonth } = useContext(SummaryContext);

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import TableTransactions from './table/TableTransactions'
 import ModalTransaction from './modal/ModalTransaction'
-import apiFetch from '../../axios/config'
+import apiFetch from '../../../../axios/config'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Toast from '../../components/Toast';
+import Toast from '../../../../components/Toast';
 import ModalUserCard from './UserCard/ModalUserCard'
 import ModalTransactionUserCard from './UserCard/ModalTransactionUserCard'
 
@@ -105,15 +105,15 @@ function Transaction() {
         <Toast />
       </div>
       <div >
-        <h6 className='uppercase dark:text-gray-200 sm:text-sm'>Adicionar transação</h6>
           
-        <div className='flex items-center gap-3'>
-          <button onClick={onClick} className='button-form py-1'>Nova transação</button>
-          <button onClick={onClickModalUser} className='button-form py-1'>Registrar usuário</button>
-          <button onClick={onClickModalTransactionUser} className='button-form py-1'>Transação usuário</button>
+        <div className='flex justify-between pb-2 px-3'>
+        <h6 className='font-extrabold dark:text-gray-200 sm:text-lg'>Receitas</h6>
+          <button onClick={onClick} className='button-form'>Adicionar</button>
+         { /*<button onClick={onClickModalUser} className='button-form py-1'>Registrar usuário</button>
+          <button onClick={onClickModalTransactionUser} className='button-form py-1'>Transação usuário</button>*/}
         </div>
       </div>
-      <div className='flex w-full flex-col items-center mt-20 gap-3 px-10'>
+      <div className='flex w-full flex-col items-center'>
         <ModalTransaction
           onClose={onClose}
           show={show}

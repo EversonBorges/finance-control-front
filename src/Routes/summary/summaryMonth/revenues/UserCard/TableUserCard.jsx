@@ -1,8 +1,8 @@
 import DataTable  from 'react-data-table-component';
 import { ChevronDoubleDownIcon, FunnelIcon, XCircleIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState, useMemo } from 'react';
-import Switch from '../../../components/Switch';
-import ThemeService from '../../../utils/style';
+import Switch from '../../../../../components/Switch';
+import ThemeService from '../../../../../utils/style';
 
 function TableUserCard(props) {
 

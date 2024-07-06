@@ -5,9 +5,9 @@ import App from './App'
 import './index.css'
 
 import CardRegister from './Routes/summary/CardRegister'
-import Transaction from './Routes/transaction/Transaction'
-import Cards from './Routes/summary/Summary'
-import MonthDetails from './Routes/summary/item/MonthDetails.jsx'
+import Transaction from './Routes/summary/summaryMonth/revenues/Transaction.jsx'
+import Cards from './Routes/summary/Summary.jsx'
+import MonthDetails from './Routes/summary/summaryMonth/revenues/MonthDetails.jsx'
 
 const router = createBrowserRouter([{
     element: <App />,
@@ -21,7 +21,7 @@ const router = createBrowserRouter([{
         element: <CardRegister/>
       },
       {
-        path: "/transactions/:id",
+        path: "/month-details/revenues/:id",
         element: <Transaction/>
       },
       {

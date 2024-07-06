@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form'
-import apiFetch from '../../../axios/config'
+import apiFetch from '../../../../../axios/config'
 import TableUserCard from './TableUserCard';
 import { FormUserCardValidationResolver } from './validations/FormUserCardValidation';
-import Switch from '../../../components/Switch'
+import Switch from '../../../../../components/Switch'
 
 const customStyles = {
     content: {

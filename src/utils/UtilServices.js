@@ -3,7 +3,8 @@ const UtilServices = {
     showToast: showToast,
     formatterDate: formatterDate,
     getListMonths: getListMonths,
-    sumCurrencies: sumCurrencies
+    operationsCurrencies:operationsCurrencies,
+    calculatePercentage:calculatePercentage
 }
 
 export default UtilServices
@@ -58,9 +59,29 @@ function formatCurrency(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-function sumCurrencies(currency1, currency2) {
+function operationsCurrencies(currency1, currency2, operator) {
   const num1 = parseCurrency(currency1);
   const num2 = parseCurrency(currency2);
-  const sum = num1 + num2;
+  let sum = 0;
+  
+  if(operator === 'sub'){
+    sum = num1 - num2;
+  }
+
+  if(operator === 'sum'){
+    sum = num1 + num2;
+  }
+
   return formatCurrency(sum);
+}
+
+function calculatePercentage(currency1, currency2) {
+  const num1 = parseCurrency(currency1);
+  const num2 = parseCurrency(currency2);
+
+  if (num2 === 0) {
+    return "0%";
+  }
+  const porcentagem = (num1 / num2) * 100;
+  return porcentagem;
 }

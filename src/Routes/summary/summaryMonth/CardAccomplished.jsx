@@ -1,29 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom'
 import UtilServices from '../../../utils/UtilServices';
+import { SummaryContext } from '../../../contexts/SummaryContext'
 
-function Card({ header, obj, bgColor}) {
+function CardAccomplished({ header, obj, bgColor, url}) {
 
     const [localObj, setLocalObj] = useState([])
     const [totalAmount, setTotalAmount] = useState("")
+    const { totalRevenues, setTotalRevenues } = useContext(SummaryContext)
 
     useEffect(() => {
         if (Array.isArray(obj)) {
             setLocalObj(obj);
-            getTotalAmount(localObj)
+            getTotalAmount(obj)
         } else {
             setLocalObj([]);
         }
 
     }, [obj]);
 
-   function getTotalAmount(localObj) {
-    if(localObj){
+   function getTotalAmount(obj) {
+    if(obj){
         var total = "R$ 0,00"
-        localObj.forEach(element => {
-            total = UtilServices.sumCurrencies(total, element.sum)
+        obj.forEach(element => {
+            total = UtilServices.operationsCurrencies(total, element.sum, 'sum')
         });
         setTotalAmount(total)
+        if(header === 'Receitas'){
+            setTotalRevenues(total);
+        }
     }
    }
 
@@ -50,9 +55,9 @@ function Card({ header, obj, bgColor}) {
                     <td class="text-black pt-2 px-1 text-right font-bold w-40">{totalAmount}</td>
                 </tbody>
             </table>
-            <Link to={"/"} className="text-black mt-auto mb-1 sm:hover:scale-125 button-link">Detalhar</Link>
+            <Link to={url} className="text-black mt-auto mb-1 sm:hover:scale-125 button-link">Detalhar</Link>
         </div>
     )
 }
 
-export default Card
+export default CardAccomplished

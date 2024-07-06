@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 
-function CardBudgeted({ header, obj, bgColor}) {
+function CardBudgetedAccomplished({ header, obj, bgColor}) {
   
     const [totalBudgeted, setTotalBudgeted] = useState("")
     const [totalAccomplished, setTotalAccomplished] = useState("")
@@ -48,4 +48,4 @@ function CardBudgeted({ header, obj, bgColor}) {
     )
 }
 
-export default CardBudgeted
+export default CardBudgetedAccomplished

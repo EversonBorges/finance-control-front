@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Month from './Month'
 import UtilServices from '../../../utils/UtilServices'
-import SummaryMonthSkeleton from '../../../components/SummaryMonthSkeleton'
+import SummaryMonthSkeleton from '../../summary/summaryMonth/SummaryMonthSkeleton'
 
 function SummaryMonth(props) {
 

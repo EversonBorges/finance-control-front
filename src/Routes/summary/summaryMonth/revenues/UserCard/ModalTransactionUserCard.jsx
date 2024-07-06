@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import apiFetch from '../../../axios/config'
+import apiFetch from '../../../../../axios/config'
 
 const customStyles = {
     content: {
