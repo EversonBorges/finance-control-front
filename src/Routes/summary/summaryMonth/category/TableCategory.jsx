@@ -1,10 +1,11 @@
 import DataTable  from 'react-data-table-component';
 import { ChevronDoubleDownIcon, FunnelIcon, XCircleIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState, useMemo } from 'react';
-import Switch from '../../../../../components/Switch';
-import ThemeService from '../../../../../utils/style';
+import Switch from '../../../../components/Switch';
+import ThemeService from '../../../../utils/style';
+import SubHeaderTable from '../../../../components/SubHeaderTable';
 
-function TableUserCard(props) {
+function TableCategory(props) {
 
     ThemeService.themeDark
     ThemeService.themeLight
@@ -12,7 +13,7 @@ function TableUserCard(props) {
     const columns = [
         {
             name: 'Nome usuário',
-            selector: row => row.nameUser,
+            selector: row => row.description,
             sortable: true,
         },
         {
@@ -27,7 +28,7 @@ function TableUserCard(props) {
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
     const filteredItems = props.userCard.filter(
-        item => item.nameUser && item.nameUser.toLowerCase().includes(filterText.toLowerCase()),
+        item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase()),
     );
 
     const subHeaderComponentMemo = useMemo(() => {
@@ -39,17 +40,14 @@ function TableUserCard(props) {
         };
 
         return (
-            <div className='flex gap-1 text-gray-900 dark:text-gray-200'>
-                <FunnelIcon className='h-6' />
-                <input 
-                        value={filterText} 
-                        onChange={e => setFilterText(e.target.value)} 
-                        placeholder='Filtrar por usuário'
-                        className='h-6  text-black' 
-                    >
-                </input> 
-                <XCircleIcon className='cursor-pointer h-6' onClick={handleClear}/>
+            <div className='f'>
+                <SubHeaderTable
+                onFilter={e => setFilterText(e.target.value)}
+                onClear={handleClear}
+                filterText={filterText}
+            />
             </div>
+   
         );
     }, [filterText, resetPaginationToggle]);
     
@@ -75,7 +73,7 @@ function TableUserCard(props) {
             selectableRowsNoSelectAll
             selectableRowsSingle
             pagination={true}
-            paginationPerPage={10}
+            paginationPerPage={5}
             paginationRowsPerPageOptions={[5, 10, 15, 20]}
             paginationComponentOptions={{ rowsPerPageText: 'Linhas por página:', rangeSeparatorText: 'de', selectAllRowsItemText: 'Todos' }}
             FixedHeader={true}
@@ -87,4 +85,4 @@ function TableUserCard(props) {
     );
 };
 
-export default TableUserCard
+export default TableCategory

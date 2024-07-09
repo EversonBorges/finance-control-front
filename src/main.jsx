@@ -4,25 +4,33 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-import CardRegister from './Routes/summary/CardRegister'
-import Transaction from './Routes/summary/summaryMonth/revenues/Transaction.jsx'
-import Cards from './Routes/summary/Summary.jsx'
-import MonthDetails from './Routes/summary/summaryMonth/revenues/MonthDetails.jsx'
+import Summary from './Routes/summary/Summary.jsx'
+import MonthDetails from './Routes/summary/summaryMonth/MonthDetails.jsx'
+import Revenues from './Routes/summary/summaryMonth/revenues/Revenues.jsx'
+import Expenses from './Routes/summary/summaryMonth/expenses/Expenses.jsx'
 
 const router = createBrowserRouter([{
     element: <App />,
     children: [
       {///cards
         path: "/",
-        element: <Cards/>
+        element: <Summary/>
       },
       {
-        path: "/card-register",
-        element: <CardRegister/>
+        path: "/month-details/revenues/:year/:month",
+        element: <Revenues/>
       },
       {
-        path: "/month-details/revenues/:id",
-        element: <Transaction/>
+        path: "/month-details/investments/:year/:month",
+        element: <Revenues/>
+      },
+      {
+        path: "/month-details/credit-card/:year/:month",
+        element: <Revenues/>
+      },
+      {
+        path: "/month-details/expenses/:year/:month/:classification",
+        element: <Expenses/>
       },
       {
         path: "/month-details/:month/:year",

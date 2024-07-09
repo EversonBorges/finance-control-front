@@ -4,7 +4,8 @@ const UtilServices = {
     formatterDate: formatterDate,
     getListMonths: getListMonths,
     operationsCurrencies:operationsCurrencies,
-    calculatePercentage:calculatePercentage
+    calculatePercentage:calculatePercentage,
+    createPaymentMethodsEnum:createPaymentMethodsEnum
 }
 
 export default UtilServices
@@ -84,4 +85,30 @@ function calculatePercentage(currency1, currency2) {
   }
   const porcentagem = (num1 / num2) * 100;
   return porcentagem;
+}
+
+function createPaymentMethodsEnum() {
+  return {
+      CREDIT_CARD: { id: "CRT", description: "Cartão de crédito" },
+      DEBIT_CARD: { id: "DBT", description: "Cartão de débito" },
+      PIX: { id: "PIX", description: "Pix" },
+      FEED_CARD: { id: "ALM", description: "Alimentação" },
+      ACCOUNT_DISCOUNT: { id: "DSC", description: "Desconto em conta" },
+
+      getByKey: function (key) {
+        if (this[key]) {
+            return this[key];
+        }
+        return null;
+    },
+
+    getKeyByDescription: function (description) {
+        for (let key in this) {
+            if (this[key].description?.toLowerCase() === description?.toLowerCase()) {
+                return key;
+            }
+        }
+        return null;
+    }
+  };
 }

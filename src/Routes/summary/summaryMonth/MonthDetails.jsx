@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import apiFetch from '../../../../axios/config';
-import CardBudgetedAccomplished from '../CardBudgetedAccomplished';
-import CardAccomplished from '../CardAccomplished';
-import { SummaryContext } from '../../../../contexts/SummaryContext'
-import UtilServices from '../../../../utils/UtilServices';
-import TrTablePercent from '../TrTablePercent';
+import apiFetch from '../../../axios/config';
+import CardBudgetedAccomplished from './CardBudgetedAccomplished';
+import CardAccomplished from './CardAccomplished';
+import { SummaryContext } from '../../../contexts/SummaryContext'
+import UtilServices from '../../../utils/UtilServices';
+import TrTablePercent from './TrTablePercent';
 
 function MonthDetails() {
     const { month, year } = useParams();
@@ -153,7 +153,7 @@ function MonthDetails() {
                 <span className='font-bold text-xl text-black'>Referencia: {monthDescription} - {selectedYear}</span>
                 <div id='pai' className='h-full flex flex-col gap-1'>
                     <div id='filho 1' className='flex-grow-[3] flex flex-row gap-1 items-center'>
-                        <CardAccomplished header={'Receitas'} obj={arrayRevenues} bgColor={'bg-emerald-200'} url={`/month-details/revenues/${10}`}/>
+                        <CardAccomplished header={'Receitas'} obj={arrayRevenues} bgColor={'bg-emerald-200'} url={`/month-details/revenues/${selectedYear}/${month}`}/>
                         <CardBudgetedAccomplished header={'Investimentos'} obj={arrayInvestments} bgColor={'bg-blue-400'} />
                         <CardAccomplished header={'Cartões'} obj={arrayCreditCard} bgColor={'bg-gray-400 '} />
                     </div>
@@ -215,8 +215,10 @@ function MonthDetails() {
                 <div className='flex gap-1 pb-1 font-semibold text-xs dark:text-gray-200 flex-grow-[1]'>
                     {
                         <>
-                            <CardBudgetedAccomplished header={'Essencial'} obj={arrayEssential} bgColor={'bg-red-400'} />
-                            <CardBudgetedAccomplished header={'Não Essencial'} obj={arrayNoEssential} bgColor={'bg-red-400'} />
+                            <CardBudgetedAccomplished header={'Essencial'} obj={arrayEssential} bgColor={'bg-red-400'} 
+                                    url={`/month-details/expenses/${selectedYear}/${month}/Essencial`}/>
+                            <CardBudgetedAccomplished header={'Não Essencial'} obj={arrayNoEssential} bgColor={'bg-red-400'} 
+                                    url={`/month-details/expenses/${selectedYear}/${month}/Não Essencial`}/>
                         </>
                     }
                 </div>

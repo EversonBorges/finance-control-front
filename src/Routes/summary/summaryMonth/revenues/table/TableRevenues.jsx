@@ -2,9 +2,9 @@ import DataTable from 'react-data-table-component';
 import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState, useMemo } from 'react';
 import ThemeService from '../../../../../utils/style';
-import SubHeaderTable from './SubHeaderTable';
+import SubHeaderTable from '../../../../../components/SubHeaderTable';
 
-function TableTransactions(props) {
+function TableRevenues(props) {
 
     ThemeService.themeDark
     ThemeService.themeLight
@@ -12,43 +12,18 @@ function TableTransactions(props) {
     const columns = [
 
         {
-            name: 'Usuário cartão',
-            selector: row => row.userCard,
+            name: 'Descrição',
+            selector: row => row.category.description,
             sortable: true,
         },
         {
-            name: 'Descrição da compra',
-            selector: row => row.purchaseDescription,
+            name: 'Valor',
+            selector: row => row.amount,
             sortable: true,
         },
         {
-            name: 'Valor compra',
-            selector: row => row.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            sortable: true,
-        },
-        {
-            name: 'Parcelado',
-            selector: row => row.installmentsTotal + ' X',
-            sortable: true,
-        },
-        {
-            name: 'Data compra',
-            selector: row => new Date(row.referenceDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
-            sortable: true,
-        },
-        {
-            name: 'Parcela',
-            selector: row => `${row.installment} / ${row.installmentsTotal}`,
-            sortable: true,
-        },
-        {
-            name: 'Data parcela',
-            selector: row => new Date(row.installmentDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
-            sortable: true,
-        },
-        {
-            name: 'Valor parcela',
-            selector: row => row.intallmentValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            name: 'Data Recebimento',
+            selector: row => row.receivingDate,
             sortable: true,
         }
     ];
@@ -56,20 +31,11 @@ function TableTransactions(props) {
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const [theme, setTheme] = useState()
-    const referenceMonth = (new Date(props.referenceDate).toLocaleDateString('pt-BR')).substring(3)
-
-    let totalPurchases = props.transactions.reduce((acc, transaction) => {
-        return acc + transaction.price
-    }, 0)
-
-    let totalPay = props.transactions.reduce((acc, transaction) => {
-        return acc + transaction.intallmentValue
-    }, 0)
-
-    const nameCard = props.transactions[0]?.nomeCard
 
     const filteredItems = props.transactions.filter(
-        item => item.userCard && item.userCard.toLowerCase().includes(filterText.toLowerCase()),
+        item => 
+           item.category.description && item.category.description.toLowerCase().includes(filterText.toLowerCase()) ||
+           item.receivingDate && item.receivingDate.toLowerCase().includes(filterText.toLowerCase())
     );
 
     const subHeaderComponentMemo = useMemo(() => {
@@ -82,10 +48,6 @@ function TableTransactions(props) {
 
         return (
             <SubHeaderTable
-                nameCard={nameCard}
-                referenceMonth={referenceMonth}
-                totalPurchases={totalPurchases}
-                totalPay={totalPay}
                 onFilter={e => setFilterText(e.target.value)}
                 onClear={handleClear}
                 filterText={filterText}
@@ -127,4 +89,4 @@ function TableTransactions(props) {
     );
 };
 
-export default TableTransactions
+export default TableRevenues
