@@ -3,26 +3,11 @@ import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState, useMemo } from 'react';
 import ThemeService from '../../../../../utils/style';
 import SubHeaderTable from '../../../../../components/SubHeaderTable';
-import UtilServices from '../../../../../utils/UtilServices';
 
 function TableExpenses(props) {
 
     ThemeService.themeDark
     ThemeService.themeLight
-
-
-    const PaymentMethods = UtilServices.createPaymentMethodsEnum();
-    
-    function getPaymentMethodInfo(key) {
-        const paymentMethod = PaymentMethods.getByKey(key);
-        return paymentMethod.description;
-        
-    }
-
-    function getKeyByDescription(description) {
-        const key = PaymentMethods.getKeyByDescription(description);
-        return key;
-    }
 
     const columns = [
         
@@ -43,7 +28,7 @@ function TableExpenses(props) {
         },
         {
             name: 'Metodo pagamento',
-            selector: row => getPaymentMethodInfo(row.paymentMethods),
+            selector: row => row.paymentMethods,
             sortable: true,
         },
         {
@@ -85,9 +70,9 @@ function TableExpenses(props) {
 
     const filteredItems = props.transactions.filter(
         item => item.category.description && item.category.description.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.category.classification && item.category.classification.toLowerCase().includes(filterText.toLowerCase()) ||
+                item.category.classification && item.category.classification.toLowerCase() === filterText.toLowerCase() ||
                 item.transactionDate && item.transactionDate.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.paymentMethods && item.paymentMethods.toLowerCase().includes(getKeyByDescription(filterText)) ||
+                item.paymentMethods && item.paymentMethods.toLowerCase().includes(filterText.toLowerCase()) ||
                 item.creditCard?.name && item.creditCard?.name.toLowerCase().includes(filterText.toLowerCase()) ||
                 item.valuesInstallment && item.valuesInstallment.toLowerCase().includes(filterText.toLowerCase()) ||
                 item.week && item.week.toLowerCase().includes(filterText.toLowerCase())

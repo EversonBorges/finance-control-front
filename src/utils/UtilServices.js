@@ -89,26 +89,36 @@ function calculatePercentage(currency1, currency2) {
 
 function createPaymentMethodsEnum() {
   return {
-      CREDIT_CARD: { id: "CRT", description: "Cartão de crédito" },
-      DEBIT_CARD: { id: "DBT", description: "Cartão de débito" },
-      PIX: { id: "PIX", description: "Pix" },
-      FEED_CARD: { id: "ALM", description: "Alimentação" },
-      ACCOUNT_DISCOUNT: { id: "DSC", description: "Desconto em conta" },
+    CREDIT_CARD: { id: "CRT", description: "Cartão de crédito" },
+    DEBIT_CARD: { id: "DBT", description: "Cartão de débito" },
+    PIX: { id: "PIX", description: "Pix" },
+    FEED_CARD: { id: "ALM", description: "Alimentação" },
+    ACCOUNT_DISCOUNT: { id: "DSC", description: "Desconto em conta" },
 
-      getByKey: function (key) {
-        if (this[key]) {
-            return this[key];
-        }
-        return null;
+    getByKey: function (key) {
+      if (this[key]) {
+        return this[key];
+      }
+      return null;
     },
 
     getKeyByDescription: function (description) {
-        for (let key in this) {
-            if (this[key].description?.toLowerCase() === description?.toLowerCase()) {
-                return key;
-            }
+      for (let key in this) {
+        if (this[key].description === description) {
+          return this[key].id;
         }
-        return null;
+      }
+      return null;
+    },
+
+    getAllMethods: function () {
+      const methods = [];
+      for (let key in this) {
+        if (typeof this[key] === 'object' && this[key].id && this[key].description) {
+          methods.push(this[key]);
+        }
+      }
+      return methods;
     }
   };
 }

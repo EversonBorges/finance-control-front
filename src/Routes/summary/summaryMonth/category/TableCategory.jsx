@@ -12,7 +12,7 @@ function TableCategory(props) {
 
     const columns = [
         {
-            name: 'Nome usuário',
+            name: 'Descrição',
             selector: row => row.description,
             sortable: true,
         },
@@ -27,8 +27,8 @@ function TableCategory(props) {
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
-    const filteredItems = props.userCard.filter(
-        item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase()),
+    const filteredItems = props.categories.filter(
+        item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase())
     );
 
     const subHeaderComponentMemo = useMemo(() => {

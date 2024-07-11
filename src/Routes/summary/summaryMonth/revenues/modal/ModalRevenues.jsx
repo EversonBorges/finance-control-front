@@ -20,21 +20,21 @@ const customStyles = {
     },
 };
 
-function ModalTransaction(props) {
+function ModalRevenues(props) {
     const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC';
     customStyles.content.background = theme;
 
     const formMethods = useForm({  });
     const { formState: { errors }, register, handleSubmit, reset, setValue, watch } = formMethods;
     const [success, setSuccess] = useState(false);
-    const [category, setCategory] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [isFormValid, setIsFormValid] = useState(false);
     const [showCategory, setShowUserCard] = useState(false);
 
     let disableClass = !isFormValid ? 'bg-gray-400' : "";
 
     useEffect(() => {
-        getCategory();
+        getCategories();
     }, []);
 
     useEffect(() => {
@@ -110,10 +110,10 @@ function ModalTransaction(props) {
         }
     };
 
-    const getCategory = async () => {
+    const getCategories = async () => {
         try {
             const response = await apiFetch.get("category/R");
-            setCategory(response.data);
+            setCategories(response.data);
         } catch (error) {
             console.log(error);
         }
@@ -145,7 +145,7 @@ function ModalTransaction(props) {
 
     const onCloseModalCategory = () => {
         setShowUserCard(false);
-        getCategory();  // Atualiza as categorias após fechar o modal
+        getCategories();
     };
 
     const openModal = () => {
@@ -169,7 +169,7 @@ function ModalTransaction(props) {
                             <div>
                                 <select {...register('category')} className="rounded-md">
                                     <option value="">Selecione uma categoria</option>
-                                    {category.map((opt) => (
+                                    {categories.map((opt) => (
                                         <option key={opt.id} value={opt.id}>{opt.description}</option>
                                     ))}
                                 </select>
@@ -203,6 +203,8 @@ function ModalTransaction(props) {
             <ModalCategory
                 onCloseModalCategory={onCloseModalCategory}
                 showCategory={showCategory}
+                getCategories={getCategories}
+                categories={categories}
                 showToast={showToast}
                 openModal={openModal}
                 type={'R'}
@@ -211,4 +213,4 @@ function ModalTransaction(props) {
     );
 }
 
-export default ModalTransaction;
+export default ModalRevenues;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import apiFetch from '../../../../axios/config';
-import TableCategory from './TableCategory';
+import TableCreditCard from './TableCreditCard';
 import CustomSwitch from '../../../../components/Switch';
 
 const customStyles = {
@@ -17,7 +17,7 @@ const customStyles = {
     },
 };
 
-function ModalCategory(props) {
+function ModalCreditCard(props) {
     const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC';
     customStyles.content.background = theme;
 
@@ -131,7 +131,7 @@ function ModalCategory(props) {
                 ariaHideApp={false}
             >
                 <form onSubmit={handleSubmit} className="form">
-                    <h1>{categoryUpdate ? "Editar categoria" : "Adicionar Categoria"}</h1>
+                    <h1>{categoryUpdate ? "Editar cartão de crédito" : "Adicionar cartão de crédito"}</h1>
 
                     <input type="hidden" name="id" value={formData.id} />
 
@@ -177,7 +177,7 @@ function ModalCategory(props) {
                     </div>
 
                     <div className='mt-5 border-t-2'>
-                        <TableCategory categories={categories} onClick={onClick} />
+                        <TableCreditCard categories={categories} onClick={onClick} />
                     </div>
                 </form>
             </Modal>
@@ -185,4 +185,4 @@ function ModalCategory(props) {
     );
 }
 
-export default ModalCategory;
+export default ModalCreditCard;
