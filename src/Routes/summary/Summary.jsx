@@ -29,7 +29,7 @@ function Summary() {
   const getSummaryMonth = async (year) => {
     setSelectedYear(year);
     try {
-      const response = await apiFetch.get(`expense/summary-month/${year}`);
+      const response = await apiFetch.get(`commons/summary-month/${year}`);
       const content = response.data;
       setSummaryMonth(content);
       console.log(content);

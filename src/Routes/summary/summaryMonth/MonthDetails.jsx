@@ -6,25 +6,40 @@ import CardAccomplished from './CardAccomplished';
 import { SummaryContext } from '../../../contexts/SummaryContext'
 import UtilServices from '../../../utils/UtilServices';
 import TrTablePercent from './TrTablePercent';
+import { MonthDetailsContext } from '../../../contexts/MonthDetailsContext';
 
 function MonthDetails() {
     const { month, year } = useParams();
-    const { selectedYear, setSelectedYear } = useContext(SummaryContext)
-    const { totalRevenues, setTotalRevenues } = useContext(SummaryContext)
-    const [arrayRevenues, setArrayRevenues] = useState({})
-    const [arrayEssential, setArrayEssential] = useState({})
-    const [arrayNoEssential, setArrayNoEssential] = useState({})
-    const [arrayInvestments, setArrayInvestments] = useState({})
-    const [arrayCreditCard, setArrayCreditCard] = useState({})
-    const [monthDescription, setMonthDescription] = useState("")
-    const [totalExpenses, setTotalExpenses] = useState("R$ 0,00")
-    const [valuePercentsInvestiments, setValuePercentsInvestiments] = useState({})
-    const [valuePercentsEssentials, setValuePercentsEssentials] = useState({})
-    const [valuePercentsNonEssentials, setValuePercentsNonEssentials] = useState({})
+    const { selectedYear, totalRevenues} = useContext(SummaryContext)
+    const {
+        arrayRevenues, setArrayRevenues,
+        arrayEssential, setArrayEssential,
+        arrayNoEssential, setArrayNoEssential,
+        arrayInvestments, setArrayInvestments,
+        arrayCreditCard, setArrayCreditCard,
+        monthDescription, setMonthDescription,
+        totalExpenses, setTotalExpenses,
+        valuePercentsInvestiments, setValuePercentsInvestiments,
+        valuePercentsEssentials, setValuePercentsEssentials,
+        valuePercentsNonEssentials, setValuePercentsNonEssentials,
+        isDataFetched, setIsDataFetched,
+        oldYear, setOldYear,
+        oldMonth, setOldMonth
+    } = useContext(MonthDetailsContext)
+
+    useEffect(() => {
+        if (!isDataFetched || oldYear != selectedYear || oldMonth !== month) {
+            getMonthDetails();
+            getMonthDescription(month)
+            setIsDataFetched(true);
+            setOldMonth(month)
+            setOldYear(selectedYear)
+        }
+    }, [selectedYear, month, isDataFetched])
 
     const getMonthDetails = async () => {
         try {
-            const response = await apiFetch.get(`expense/summary-month/${selectedYear}/${month}`);
+            const response = await apiFetch.get(`commons/summary-month/${selectedYear}/${month}`);
             const content = response.data;
 
             if (content && content.revenuesSummaryDTOS) {
@@ -73,11 +88,6 @@ function MonthDetails() {
             console.log(error);
         }
     };
-
-    useEffect(() => {
-        getMonthDetails();
-        getMonthDescription(month)
-    }, [selectedYear, month])
 
     function getMonthDescription(code) {
         var months = UtilServices.getListMonths()
@@ -153,9 +163,9 @@ function MonthDetails() {
                 <span className='font-bold text-xl text-black'>Referencia: {monthDescription} - {selectedYear}</span>
                 <div id='pai' className='h-full flex flex-col gap-1'>
                     <div id='filho 1' className='flex-grow-[3] flex flex-row gap-1 items-center'>
-                        <CardAccomplished header={'Receitas'} obj={arrayRevenues} bgColor={'bg-emerald-200'} url={`/month-details/revenues/${selectedYear}/${month}`}/>
-                        <CardBudgetedAccomplished header={'Investimentos'} obj={arrayInvestments} bgColor={'bg-blue-400'} />
-                        <CardAccomplished header={'Cartões'} obj={arrayCreditCard} bgColor={'bg-gray-400 '} />
+                        <CardAccomplished btnDtlVisible={true} header={'Receitas'} obj={arrayRevenues} bgColor={'bg-emerald-200'} url={`/month-details/revenues/${selectedYear}/${month}`}/>
+                        <CardBudgetedAccomplished header={'Investimentos'} obj={arrayInvestments} bgColor={'bg-blue-400'} url={`/month-details/investments/${selectedYear}/${month}`}/>
+                        <CardAccomplished btnDtlVisible={false} header={'Cartões'} obj={arrayCreditCard} bgColor={'bg-gray-400 '} />
                     </div>
                     <div id='filho 2' className='p-1 flex  items-center flex-col pb-1 bg-gray-400 font-semibold text-xs dark:text-gray-200 rounded-lg '>
                     <span className=' text-sm text-black'>Resultados</span>

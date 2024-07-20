@@ -9,24 +9,22 @@ import { SummaryContext } from '../../../../../contexts/SummaryContext'
 import SummaryService from '../../../service/SummaryService';
 import { MonthDetailsContext } from '../../../../../contexts/MonthDetailsContext';
 
-function ModalRevenues(props) {
-
+function ModalInvestments(props) {
     const {
-        theme,
-        categories,
-        showModalCategory, 
-        setShowModalCategory
+        categories, theme, 
+        showModalCategory, setShowModalCategory
     } = useContext(SummaryContext)
+    
     const { setIsDataFetched } = useContext(MonthDetailsContext)
 
     const formMethods = useForm({  });
     const { formState: { errors }, register, handleSubmit, reset, setValue, watch } = formMethods;
     const [success, setSuccess] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
-    
+
     let disableClass = !isFormValid ? 'bg-gray-400' : "";
     const customStyles = SummaryService.getCustomStyle(theme)
-   
+
     useEffect(() => {
         if (success) {
             executeReset()
@@ -48,10 +46,20 @@ function ModalRevenues(props) {
     function setValueEdit() {
         if (props.edit) {
             setValue("id", props.edit.id);
-            setValue("amount", props.edit.amount);
-            setValue("receivingDate", formatDateForInput(props.edit.receivingDate));
+            setValue("description", props.edit.description);
+            setValue("valueInvestments", props.edit.valueInvestments);
+            setValue("transactionDate", formatDateForInput(props.edit.transactionDate));
             setValue("category", props.edit.category.id);
         }
+    }
+
+    function executeReset() {
+        return reset({
+            description: "",
+            transactionDate: "",
+            valueInvestments: "",
+            category: ""
+        });
     }
 
     function formatDateForInput(dateStr) {
@@ -60,24 +68,17 @@ function ModalRevenues(props) {
     }
 
     function validateForm(values) {
-        return values.category && values.receivingDate && values.amount;
-    }
-
-    function executeReset() {
-        reset({
-            amount: "",
-            receivingDate: "",
-            category: ""
-        });
+        return values.category && values.transactionDate && values.valueInvestments && values.description;
     }
 
     const onSubmit = async (values) => {
-        values.receivingDate = new Date(values.receivingDate).toLocaleDateString('pt-BR');
+        values.transactionDate = new Date(values.transactionDate).toLocaleDateString('pt-BR');
 
         const request = {
             id: values.id,
-            amount: values.amount,
-            receivingDate: values.receivingDate,
+            description: values.description,
+            valueInvestments: values.valueInvestments,
+            transactionDate: values.transactionDate,
             category: {
                 id: values.category
             }
@@ -85,20 +86,20 @@ function ModalRevenues(props) {
 
         try {
             if (props.edit) {
-                await apiFetch.put("revenues", request);
+                await apiFetch.put("investments", request);
                 props.showToast("Editado com sucesso!", "success");
             } else {
-                await apiFetch.post("revenues", request);
+                await apiFetch.post("investments", request);
                 props.showToast("Adicionado com sucesso!", "success");
             }
             setSuccess(true);
-            props.getRevenues();
+            props.getInvestments();
             props.onClose();
             setIsDataFetched(false);
         } catch (error) {
             console.log(error);
             props.showToast(error.message, "error");
-          }
+        }
     };
 
     const closeModal = () => {
@@ -119,8 +120,12 @@ function ModalRevenues(props) {
                 ariaHideApp={false}
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="form">
-                    <h1>{props.edit ? "Editar receita" : "Adicionar nova receita"}</h1>
+                    <h1>{props.edit ? "Editar investimento" : "Novo investimento"}</h1>
                     <input {...register('id')} type="hidden" />
+                    <div>
+                            <label htmlFor="description">Descrição</label>
+                            <input {...register('description')} type="text" />
+                        </div>
                     <div className='block mb-2'>
                         <label htmlFor="category">Categoria</label>
                         <div className='flex flex-row items-center gap-3'>
@@ -141,12 +146,12 @@ function ModalRevenues(props) {
                     </div>
                     <div className='grid gap-3'>
                         <div>
-                            <label htmlFor="receivingDate">Data do Recebimento</label>
-                            <input {...register('receivingDate')} type="date" />
+                            <label htmlFor="transactionDate">Data investimento</label>
+                            <input {...register('transactionDate')} type="date" />
                         </div>
                         <div>
-                            <label htmlFor="amount">Valor</label>
-                            <input {...register('amount')} type="text" onInput={UtilServices.mascaraMoeda} />
+                            <label htmlFor="valueInvestments">Valor</label>
+                            <input {...register('valueInvestments')} type="text" onInput={UtilServices.mascaraMoeda} />
                         </div>
                     </div>
                     <div className="flex justify-center gap-10 mt-5">
@@ -158,10 +163,10 @@ function ModalRevenues(props) {
             <ModalCategory
                 show={showModalCategory}
                 home={false}
-                type={'R'}
+                type={'I'}
             />
         </div>
     );
 }
 
-export default ModalRevenues;
+export default ModalInvestments;

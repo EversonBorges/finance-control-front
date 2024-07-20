@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import TableRevenues from './table/TableRevenues'
-import ModalRevenues from './modal/ModalRevenues'
+import TableInvestments from './table/TableInvestments'
 import apiFetch from '../../../../axios/config'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Toast from '../../../../components/Toast';
 import UtilServices from '../../../../utils/UtilServices';
 import AlterMonthYear from '../../../../components/AlterMonthyear';
+import ModalInvestments from './modal/ModalInvestments'
 
-function Revenues(props) {
+function Investments(props) {
 
   const { month, year } = useParams();
   const [show, setShow] = useState(false)
   
   let [edit, setEdit] = useState()
-  const [revenues, setRevenues] = useState([])
+  const [investments, setInvestments] = useState([])
   const [isEdit, setIsEdit] = useState(false)
   const [monthDescription, setMonthDescription] = useState("")
-  const [revenueYear, setRevenueYear] = useState(year)
-  const [revenueMonth, setRevenueMonth] = useState(month)
+  const [investmentsYear, setInvestmentsYear] = useState(year)
+  const [investmentsMonth, setInvestmentsMonth] = useState(month)
 
   const onClick = (event) => {
     setShow(true)
@@ -33,13 +33,13 @@ function Revenues(props) {
     setIsEdit(false)
   }
 
-  const getRevenues = async () => {
+  const getInvestments = async () => {
 
     try {
-      let url = props.home ? `revenues/reference-year-month/${revenueYear}`
-          :`revenues/reference-year-month?year=${revenueYear}&month=${revenueMonth}`
+      let url = props.home ? `investments/reference-year-month/${investmentsYear}`
+          :`investments/reference-year-month?year=${investmentsYear}&month=${investmentsMonth}`
       const response = await apiFetch.get(url)
-      setRevenues(response.data)
+      setInvestments(response.data)
     } catch (error) {
       console.log(error);
     }
@@ -70,16 +70,16 @@ function Revenues(props) {
 
   const alterMonthAndYear = (increment) => {
 
-    let result = UtilServices.moveToMonthAndYear(increment, revenueMonth, revenueYear)
+    let result = UtilServices.moveToMonthAndYear(increment, investmentsMonth, investmentsYear)
 
-    setRevenueMonth(result.newMonth)
-    setRevenueYear(result.newYear)
+    setInvestmentsMonth(result.newMonth)
+    setInvestmentsYear(result.newYear)
   }
 
   useEffect(() => {
-    getRevenues()
-    getMonthDescription(revenueMonth)
-  }, [revenueMonth, revenueYear])
+    getInvestments()
+    getMonthDescription(investmentsMonth)
+  }, [investmentsMonth, investmentsYear])
 
   return (
     <div className='container'>
@@ -89,26 +89,26 @@ function Revenues(props) {
       <div>
         <AlterMonthYear
             home={props.home}
-            header={'Receitas'}
+            header={'Investimentos'}
             alterMonthAndYear={alterMonthAndYear}
             monthDescription={monthDescription}
-            year={revenueYear}
+            year={investmentsYear}
             add={onClick} />
       </div>
       <div>
-        <ModalRevenues
+        <ModalInvestments
           onClose={onClose}
           show={show}
           edit={edit}
-          getRevenues={getRevenues}
+          getInvestments={getInvestments}
           showToast={showToast}
           isEdit={isEdit} />
-        <TableRevenues
+        <TableInvestments
           onClick={onClick}
-          transactions={revenues} />
+          transactions={investments} />
       </div>
     </div>
   )
 }
 
-export default Revenues
+export default Investments

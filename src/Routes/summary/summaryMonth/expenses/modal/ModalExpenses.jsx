@@ -1,52 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Modal from 'react-modal';
 import { useForm } from 'react-hook-form';
 import apiFetch from '../../../../../axios/config';
 import UtilServices from '../../../../../utils/UtilServices';
-import { toast } from 'react-toastify';
 import ModalCategory from '../../category/ModalCategory';
-import { PlusCircleIcon, CreditCardIcon, DocumentIcon } from "@heroicons/react/24/solid";
+import { CreditCardIcon, DocumentIcon } from "@heroicons/react/24/solid";
 import ModalCreditCard from '../../creditCard/ModalCreditCard';
-
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '20px',
-        background: '',
-    },
-};
+import { SummaryContext } from '../../../../../contexts/SummaryContext'
+import SummaryService from '../../../service/SummaryService';
+import { MonthDetailsContext } from '../../../../../contexts/MonthDetailsContext';
 
 function ModalExpenses(props) {
-    const theme = document.getElementsByClassName('dark').length === 1 ? '#1E2734' : '#B3B7BC';
-    customStyles.content.background = theme;
 
     const formMethods = useForm({});
+    const { creditCards, theme,categories, 
+            showModalCreditCard, setShowModalCreditCard,
+            showModalCategory, setShowModalCategory
+        } = useContext(SummaryContext)
+    const { setIsDataFetched } = useContext(MonthDetailsContext)
+
     const { formState: { errors }, register, handleSubmit, reset, setValue, watch } = formMethods;
     const [success, setSuccess] = useState(false);
-    const [categories, setCategories] = useState([]);
     const [paymentsMethods, setPaymentsMethods] = useState([]);
-    const [creditCards, setCreditCards] = useState([]);
     const [isFormValid, setIsFormValid] = useState(false);
-    const [showModalCategory, setShowModalCategory] = useState(false);
-    const [showModalCreditCard, setShowModalCreditCard] = useState(false);
+    
     const [showCreditCard, setShowCreditCard] = useState(false)
 
     let disableClass = !isFormValid ? 'bg-gray-400' : "";
+    const customStyles = SummaryService.getCustomStyle(theme)
 
     const paymentsMethodsUtil = UtilServices.createPaymentMethodsEnum()
 
     useEffect(() => {
-        getCategories()
         getPaymentMethods()
-        getCreditCards()
     }, []);
 
-    function getReset() {
+    function executeReset() {
         return reset({
             establishment: "",
             quantityInstallments: 0,
@@ -60,7 +49,7 @@ function ModalExpenses(props) {
 
     useEffect(() => {
         if (success) {
-            getReset()
+            executeReset()
             setSuccess(false);
         }
 
@@ -140,6 +129,7 @@ function ModalExpenses(props) {
             setSuccess(true);
             props.getExpenses();
             props.onClose();
+            setIsDataFetched(false);
         } catch (error) {
             console.log(error);
             props.showToast(error.message, "error");
@@ -150,56 +140,9 @@ function ModalExpenses(props) {
         setPaymentsMethods(paymentsMethodsUtil.getAllMethods())
     }
 
-    const getCategories = async () => {
-        try {
-            const response = await apiFetch.get("category/E");
-            setCategories(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const getCreditCards = async () => {
-        try {
-            const response = await apiFetch.get("credit-card");
-            setCreditCards(response.data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const closeModal = () => {
-        getReset()
+        executeReset()
         props.onClose();
-    };
-
-    const showToast = (params, type) => {
-        switch (type) {
-            case "success":
-                toast.success(params);
-                break;
-            case "warn":
-                toast.warn(params);
-                break;
-        }
-    };
-
-    const onClickModalCategory = () => {
-        setShowModalCategory(true);
-    };
-
-    const onClickModalCreditCard = () => {
-        setShowModalCreditCard(true);
-    };
-
-    const onCloseModalCategory = () => {
-        setShowModalCategory(false);
-        getCategories();
-    };
-
-    const onCloseModalCreditCard = () => {
-        setShowModalCreditCard(false);
-        getCategories();
     };
 
     const openModalCategory = () => {
@@ -236,13 +179,13 @@ function ModalExpenses(props) {
                                 <div>
                                     <select {...register('category')} className="rounded-md">
                                         <option value="">Selecione </option>
-                                        {categories.map((opt) => (
+                                        {categories.filter(opt => opt.active).map((opt) => (
                                             <option key={opt.id} value={opt.id}>{opt.description}</option>
                                         ))}
                                     </select>
                                 </div>
                                 <div>
-                                    <button type="button" onClick={onClickModalCategory}>
+                                    <button type="button" onClick={openModalCategory}>
                                         <DocumentIcon className='h-5 sm:h-6  text-gray-900 dark:text-gray-100 block cursor-pointer sm:hover:scale-110' />
                                     </button>
                                 </div>
@@ -266,13 +209,13 @@ function ModalExpenses(props) {
                                     <div className='w-full'>
                                         <select {...register('creditCard')} className="w-full rounded-md">
                                             <option value="">Selecione</option>
-                                            {creditCards.map((opt) => (
+                                            {creditCards.filter(opt => opt.active).map((opt) => (
                                                 <option key={opt.id} value={opt.id}>{opt.name}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div>
-                                        <button type="button" onClick={onClickModalCreditCard}>
+                                        <button type="button" onClick={openModalCreditCard}>
                                             <CreditCardIcon className='h-5 sm:h-6  text-gray-900 dark:text-gray-100 block cursor-pointer sm:hover:scale-110' />
                                         </button>
                                     </div>
@@ -295,24 +238,11 @@ function ModalExpenses(props) {
                 </form>
             </Modal>
             <ModalCategory
-                onCloseModalCategory={onCloseModalCategory}
-                showCategory={showModalCategory}
-                getCategories={getCategories}
-                categories={categories}
-                showToast={showToast}
-                openModal={openModalCategory}
+                show={showModalCategory}
+                home={false}
                 type={'E'}
             />
-            <ModalCreditCard
-            //todo alterar as propriedades  abaixo que estão com nome de category
-                onCloseModalCategory={onCloseModalCreditCard}
-                showCategory={showModalCreditCard}
-                getCategories={getCategories}
-                categories={categories}
-                showToast={showToast}
-                openModal={openModalCreditCard}
-                type={'E'}
-            />
+            <ModalCreditCard show={showModalCreditCard} home={false}/>
         </div>
     );
 }

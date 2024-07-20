@@ -5,7 +5,10 @@ const UtilServices = {
     getListMonths: getListMonths,
     operationsCurrencies:operationsCurrencies,
     calculatePercentage:calculatePercentage,
-    createPaymentMethodsEnum:createPaymentMethodsEnum
+    createPaymentMethodsEnum:createPaymentMethodsEnum,
+    moveToMonthAndYear:moveToMonthAndYear,
+    parseCurrencyForGraphics:parseCurrencyForGraphics,
+    getMonthBasedNumber:getMonthBasedNumber
 }
 
 export default UtilServices
@@ -59,6 +62,11 @@ function parseCurrency(value) {
 function formatCurrency(value) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
+
+
+function parseCurrencyForGraphics(value){
+  return parseFloat(value.replace(/[^\d,-]/g, '').replace(',', '.'));
+};
 
 function operationsCurrencies(currency1, currency2, operator) {
   const num1 = parseCurrency(currency1);
@@ -121,4 +129,31 @@ function createPaymentMethodsEnum() {
       return methods;
     }
   };
+}
+
+function  moveToMonthAndYear(increment,expenseMonth, expenseYear){
+  let newMonth = parseInt(expenseMonth) + increment
+  let newYear = expenseYear
+  if (newMonth > 12) {
+    newMonth = 1
+    newYear = parseInt(expenseYear) + 1
+  } else if (newMonth < 1) {
+    newMonth = 12
+    newYear = parseInt(expenseYear) - 1
+  }
+ 
+  return {
+    newMonth: newMonth,
+    newYear: newYear
+  }
+
+}
+
+function getMonthBasedNumber(number) {
+  const months = [
+    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+    'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
+  ];
+  
+  return months[number - 1];
 }

@@ -1,51 +1,49 @@
-import DataTable  from 'react-data-table-component';
-import { ChevronDoubleDownIcon} from '@heroicons/react/24/solid'
-import { useContext, useState, useMemo } from 'react';
-import Switch from '../../../../components/Switch';
-import SubHeaderTable from '../../../../components/SubHeaderTable';
-import { SummaryContext } from '../../../../contexts/SummaryContext';
-import '../../style/DatableStyle.css';
-import CustomPaginator from '../../../../components/CustomPaginator';
+import DataTable from 'react-data-table-component';
+import { ChevronDoubleDownIcon } from '@heroicons/react/24/solid'
+import { useState, useMemo, useContext } from 'react';
+import SubHeaderTable from '../../../../../components/SubHeaderTable';
+import { SummaryContext } from '../../../../../contexts/SummaryContext';
+import CustomPaginator from '../../../../../components/CustomPaginator';
+import '../../../style/DatableStyle.css'; 
 
-function TableCategory(props) {
+function TableInvestments(props) {
 
     const columns = [
+
+        {
+            name: 'Data Recebimento',
+            selector: row => row.transactionDate,
+            sortable: true,
+        },
         {
             name: 'Descrição',
             selector: row => row.description,
             sortable: true,
-            width:'200px'
         },
         {
-            name: 'Classificação',
-            selector: row => row.classification,
+            name: 'Categoria',
+            selector: row => row.category.description,
             sortable: true,
-            width:'120px'
         },
         {
-            name: 'Tipo',
-            selector: row => row.type,
+            name: 'Valor',
+            selector: row => row.valueInvestments,
             sortable: true,
-            width:'50px'
-        },
-        {
-            name: 'Ativo',
-            button: true,
-            cell: row => <Switch checked={row.active} disabled={true}/>,
-            width:'70px'
-         }
+        }
     ];
 
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(11);
     const { theme } = useContext(SummaryContext);
 
-    const filteredItems = props.categories.filter(
-        item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.classification && item.classification.toLowerCase() === filterText.toLowerCase() ||
-                item.type && item.type.toLowerCase() === filterText.toLowerCase()
+    const filteredItems = props.transactions.filter(
+        item =>
+            item.category.description && item.category.description.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.transactionDate && item.transactionDate.toLowerCase().includes(filterText.toLowerCase()) ||
+            item.valueInvestments && item.valueInvestments.toLowerCase().includes(filterText.toLowerCase())||
+            item.description && item.description.toLowerCase().includes(filterText.toLowerCase()) 
     );
 
     const subHeaderComponentMemo = useMemo(() => {
@@ -57,11 +55,10 @@ function TableCategory(props) {
         };
 
         return (
-                <SubHeaderTable
+            <SubHeaderTable
                 onFilter={e => setFilterText(e.target.value)}
                 onClear={handleClear}
                 filterText={filterText}
-                show={true}
             />
         );
     }, [filterText, resetPaginationToggle]);
@@ -80,7 +77,7 @@ function TableCategory(props) {
     const currentData = filteredItems.slice(startIndex, endIndex);
 
     return (
-        <div className="table-container  h-[300px]">
+        <div className="table-container  h-[500px]">
             <div className="table-content">
                 <DataTable
                     columns={columns}
@@ -112,11 +109,11 @@ function TableCategory(props) {
                     totalRows={filteredItems.length}
                     onPageChange={handlePageChange}
                     onRowsPerPageChange={handleRowsPerPageChange}
-                    padding='py-2'
+                    padding='py-3'
                 />
             </div>
         </div>
     );
 };
 
-export default TableCategory
+export default TableInvestments

@@ -1,0 +1,13 @@
+.table-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #444343;
+  }
+  
+  .table-content {
+    flex: 1;
+    overflow: auto; /* Permite rolagem interna */
+  }
+  
+  
+  

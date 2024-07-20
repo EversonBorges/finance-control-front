@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import UtilServices from '../../../utils/UtilServices';
 import { SummaryContext } from '../../../contexts/SummaryContext'
 
-function CardAccomplished({ header, obj, bgColor, url}) {
+function CardAccomplished({btnDtlVisible, header, obj, bgColor, url}) {
 
     const [localObj, setLocalObj] = useState([])
     const [totalAmount, setTotalAmount] = useState("")
@@ -55,7 +55,9 @@ function CardAccomplished({ header, obj, bgColor, url}) {
                     <td className="text-black pt-2 px-1 text-right font-bold w-40">{totalAmount}</td>
                 </tbody>
             </table>
-            <Link to={url} className="text-black mt-auto mb-1 sm:hover:scale-125 button-link">Detalhar</Link>
+            {btnDtlVisible && 
+                <Link  to={url} className="text-black mt-auto mb-1 sm:hover:scale-125 button-link">Detalhar</Link>
+            }
         </div>
     )
 }

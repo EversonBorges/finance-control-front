@@ -1,34 +1,58 @@
 import DataTable  from 'react-data-table-component';
 import { ChevronDoubleDownIcon, FunnelIcon, XCircleIcon } from '@heroicons/react/24/solid'
-import { useEffect, useState, useMemo } from 'react';
+import { useContext, useState, useMemo } from 'react';
 import Switch from '../../../../components/Switch';
-import ThemeService from '../../../../utils/style';
 import SubHeaderTable from '../../../../components/SubHeaderTable';
+import { SummaryContext } from '../../../../contexts/SummaryContext';
+import '../../style/DatableStyle.css';
+import CustomPaginator from '../../../../components/CustomPaginator';
 
 function TableCreditCard(props) {
 
-    ThemeService.themeDark
-    ThemeService.themeLight
-
     const columns = [
         {
-            name: 'Descrição',
-            selector: row => row.description,
+            name: 'Nome',
+            selector: row => row.name,
             sortable: true,
+             width:'150px'
+        },
+        {
+            name: 'Bandeira',
+            selector: row => row.flag,
+            sortable: true,
+             width:'150px'
+        },
+        {
+            name: 'Dia compra',
+            selector: row => row.dueDate,
+            sortable: true,
+             width:'100px'
+        },
+        {
+            name: 'Vencimento',
+            selector: row => row.referenceDayPurchase,
+            sortable: true,
+             width:'100px'
         },
         {
             name: 'Ativo',
             button: true,
-            cell: row => <Switch handleChange={handleChange} checked={row.active} disabled={true}/>,
+            cell: row => <Switch checked={row.active} disabled={true}/>,
+             width:'70px'
          }
     ];
 
-    const [theme, setTheme] = useState()
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const { theme } = useContext(SummaryContext);
 
-    const filteredItems = props.categories.filter(
-        item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase())
+    const filteredItems = props.creditCards?.filter(
+        item => item.name && item.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                item.flag && item.flag.toLowerCase().includes(filterText.toLowerCase()) ||
+                item.dueDate && item.dueDate === Number(filterText) ||
+                item.referenceDayPurchase && item.referenceDayPurchase === Number(filterText)
     );
 
     const subHeaderComponentMemo = useMemo(() => {
@@ -50,38 +74,57 @@ function TableCreditCard(props) {
    
         );
     }, [filterText, resetPaginationToggle]);
-    
-    useEffect(() => {
-        setTheme(document.getElementsByClassName('dark').length === 1 ? 'dark' : 'light')
-    }, [theme])
 
-    const handleChange = (event) => {
-    }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const handleRowsPerPageChange = (rows) => {
+        setRowsPerPage(rows);
+        setCurrentPage(1); // Reset to first page when rows per page changes
+    };
+
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const currentData = filteredItems.slice(startIndex, endIndex);
 
     return (
-        <DataTable
-            columns={columns}
-            data={filteredItems}
-            highlightOnHover={true}
-            pointerOnHover={true}
-            dense={true}
-            striped={true}
-            noDataComponent={"Não há dados"}
-            onRowDoubleClicked={(row) => props.onClick(row)}
-            sortIcon={<ChevronDoubleDownIcon />}
-            selectableRowsHighlight
-            selectableRowsNoSelectAll
-            selectableRowsSingle
-            pagination={true}
-            paginationPerPage={5}
-            paginationRowsPerPageOptions={[5, 10, 15, 20]}
-            paginationComponentOptions={{ rowsPerPageText: 'Linhas por página:', rangeSeparatorText: 'de', selectAllRowsItemText: 'Todos' }}
-            FixedHeader={true}
-            theme={theme}
-            noContextMenu={true}
-            subHeader={true}
-            subHeaderComponent={subHeaderComponentMemo}
-        />
+        <div className="table-container  h-[300px]">
+            <div className="table-content">
+                <DataTable
+                    columns={columns}
+                    data={currentData}
+                    highlightOnHover={true}
+                    pointerOnHover={true}
+                    dense={true}
+                    striped={true}
+                    noDataComponent={"Não há dados"}
+                    onRowDoubleClicked={(row) => props.onClick(row)}
+                    sortIcon={<ChevronDoubleDownIcon />}
+                    selectableRowsHighlight
+                    selectableRowsNoSelectAll
+                    selectableRowsSingle
+                    FixedHeader={true}
+                    theme={theme}
+                    noContextMenu={true}
+                    subHeader={true}
+                    subHeaderComponent={subHeaderComponentMemo}
+                    subHeaderAlign="center"
+                    subHeaderWrap={false}
+                    noHeader={true}
+                />
+            </div>
+            <div>
+                <CustomPaginator
+                    currentPage={currentPage}
+                    rowsPerPage={rowsPerPage}
+                    totalRows={filteredItems.length}
+                    onPageChange={handlePageChange}
+                    onRowsPerPageChange={handleRowsPerPageChange}
+                    padding='py-2'
+                />
+            </div>
+        </div>
     );
 };
 

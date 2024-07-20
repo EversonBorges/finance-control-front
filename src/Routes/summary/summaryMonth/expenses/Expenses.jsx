@@ -7,9 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Toast from '../../../../components/Toast';
 import UtilServices from '../../../../utils/UtilServices';
 import ModalExpenses from './modal/ModalExpenses'
-import { ArrowLeftCircleIcon,  ArrowRightCircleIcon} from "@heroicons/react/24/solid";
+import AlterMonthYear from '../../../../components/AlterMonthyear';
 
-function Expenses() {
+function Expenses(props) {
   const { month, year, classification } = useParams();
   const [show, setShow] = useState(false)
   const [expenseYear, setExpenseYear] = useState(year)
@@ -33,7 +33,9 @@ function Expenses() {
 
   const getExpenses = async () => {
     try {
-      const response = await apiFetch.get(`expense/reference-year-month?year=${expenseYear}&month=${expenseMonth}`)
+      let url = props.home ? `expense/reference-year-month/${expenseYear}`
+        : `expense/reference-year-month?year=${expenseYear}&month=${expenseMonth}`
+      const response = await apiFetch.get(url)
       setExpenses(response.data)
     } catch (error) {
       console.log(error);
@@ -50,17 +52,11 @@ function Expenses() {
   }
 
   const alterMonthAndYear = (increment) => {
-    let newMonth = parseInt(expenseMonth) + increment
-    let newYear = expenseYear
-    if (newMonth > 12) {
-      newMonth = 1
-      newYear = parseInt(expenseYear) + 1
-    } else if (newMonth < 1) {
-      newMonth = 12
-      newYear = parseInt(expenseYear) - 1
-    }
-    setExpenseMonth(newMonth)
-    setExpenseYear(newYear)
+
+    let result = UtilServices.moveToMonthAndYear(increment, expenseMonth, expenseYear)
+
+    setExpenseMonth(result.newMonth)
+    setExpenseYear(result.newYear)
   }
 
   const showToast = (params, type) => {
@@ -87,22 +83,16 @@ function Expenses() {
       <div>
         <Toast />
       </div>
-      <div >
-        <div className='flex justify-between pb-2 px-3'>
-          <h6 className='font-extrabold dark:text-gray-200 sm:text-lg'>Despesas</h6>
-          <div className='flex gap-3 items-center'>
-            <button type="button" onClick={() => alterMonthAndYear(-1)}>
-              <ArrowLeftCircleIcon className='h-5 sm:h-8  text-gray-900 dark:text-gray-100 block cursor-pointer sm:hover:scale-110' />
-            </button>
-            <h6 className='font-extrabold dark:text-gray-200 sm:text-lg'>{monthDescription} - {expenseYear}</h6>
-            <button type="button" onClick={() => alterMonthAndYear(1)}>
-              <ArrowRightCircleIcon className='h-5 sm:h-8  text-gray-900 dark:text-gray-100 block cursor-pointer sm:hover:scale-110' />
-            </button>
-          </div>
-          <button onClick={onClick} className='button-form'>Novo</button>
-        </div>
+      <div>
+        <AlterMonthYear
+          home={props.home}
+          header={'Despesas'}
+          alterMonthAndYear={alterMonthAndYear}
+          monthDescription={monthDescription}
+          year={expenseYear}
+          add={onClick} />
       </div>
-      <div className='flex w-full flex-col items-center'>
+      <div className='p-2'>
         <ModalExpenses
           onClose={onClose}
           show={show}
@@ -113,7 +103,7 @@ function Expenses() {
         <TableExpenses
           onClick={onClick}
           transactions={expenses}
-          filter={classification} />
+          filter={props.home ? "" : classification} />
       </div>
     </div>
   )
