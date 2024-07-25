@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom'
+import { SummaryContext } from '../../../contexts/SummaryContext';
 
 function CardBudgetedAccomplished({ header, obj, bgColor, url}) {
   
     const [totalBudgeted, setTotalBudgeted] = useState("")
     const [totalAccomplished, setTotalAccomplished] = useState("")
     const [localObj, setLocalObj] = useState([])
+    const { setBalanceExpensesEssential,
+        setBalanceInvestments,
+        setBalanceExpensesNoEssential
+    } = useContext(SummaryContext)
+
+    
 
     useEffect(() => {
         if (Array.isArray(obj.array)) {
@@ -13,8 +20,22 @@ function CardBudgetedAccomplished({ header, obj, bgColor, url}) {
         } else {
             setLocalObj([]);
         }
+
         setTotalAccomplished(obj.totalAccomplished)
         setTotalBudgeted(obj.totalBudgeted)
+        
+        if(header === 'Investimentos'){
+            setBalanceInvestments(obj.totalAccomplished)
+        }
+
+        if(header === 'Essencial'){
+            setBalanceExpensesEssential(obj.totalAccomplished)
+        }
+
+        if(header === 'Não Essencial'){
+            setBalanceExpensesNoEssential(obj.totalAccomplished)
+        }
+
     }, [obj]);
 
     return (

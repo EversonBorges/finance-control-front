@@ -1,3 +1,6 @@
+import { format, parseISO } from "date-fns"
+import { ptBR } from "date-fns/locale"
+
 const UtilServices = {
     mascaraMoeda: mascaraMoeda,
     showToast: showToast,
@@ -8,7 +11,8 @@ const UtilServices = {
     createPaymentMethodsEnum:createPaymentMethodsEnum,
     moveToMonthAndYear:moveToMonthAndYear,
     parseCurrencyForGraphics:parseCurrencyForGraphics,
-    getMonthBasedNumber:getMonthBasedNumber
+    getMonthBasedNumber:getMonthBasedNumber,
+    formatCurrency:formatCurrency
 }
 
 export default UtilServices
@@ -41,8 +45,9 @@ function showToast(params, type) {
     }
   }
 
-  function formatterDate(dt){
-    return `${dt.substring(8,10)}/${dt.substring(5,7)}`
+  function formatterDate(value){
+    const date = parseISO(value);
+    return format(date, 'dd/MM/yyyy', { locale: ptBR });
  }
 
 function getListMonths() {
@@ -55,6 +60,10 @@ function getListMonths() {
 }
 
 function parseCurrency(value) {
+  if (typeof value !== 'string') {
+    console.error("Expected a string for parseCurrency, but got:", value);
+    return "R$ 0,00"; // Retorno padrão caso o valor não seja uma string
+}
   value = value.replace("R$", "").trim();
   return parseFloat(value.replace(/\./g, '').replace(',', '.'));
 }
@@ -74,14 +83,13 @@ function operationsCurrencies(currency1, currency2, operator) {
   let sum = 0;
   
   if(operator === 'sub'){
-    sum = num1 - num2;
+    return formatCurrency(num1 - num2);
   }
 
   if(operator === 'sum'){
-    sum = num1 + num2;
+    return formatCurrency(num1 + num2);
   }
 
-  return formatCurrency(sum);
 }
 
 function calculatePercentage(currency1, currency2) {

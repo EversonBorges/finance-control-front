@@ -72,12 +72,11 @@ function ModalRevenues(props) {
     }
 
     const onSubmit = async (values) => {
-        values.receivingDate = new Date(values.receivingDate).toLocaleDateString('pt-BR');
 
         const request = {
             id: values.id,
             amount: values.amount,
-            receivingDate: values.receivingDate,
+            receivingDate: UtilServices.formatterDate(values.receivingDate),
             category: {
                 id: values.category
             }

@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import apiFetch from '../../../axios/config';
 import CardBudgetedAccomplished from './CardBudgetedAccomplished';
 import CardAccomplished from './CardAccomplished';
-import { SummaryContext } from '../../../contexts/SummaryContext'
+import { SummaryContext } from '../../../contexts/SummaryContext';
 import UtilServices from '../../../utils/UtilServices';
 import TrTablePercent from './TrTablePercent';
 import { MonthDetailsContext } from '../../../contexts/MonthDetailsContext';
 
 function MonthDetails() {
     const { month, year } = useParams();
-    const { selectedYear, totalRevenues} = useContext(SummaryContext)
+    const { 
+        selectedYear, 
+        totalRevenues,
+        balanceExpensesEssential,
+        balanceInvestments,
+        balanceExpensesNoEssential
+    } = useContext(SummaryContext);
+    
     const {
         arrayRevenues, setArrayRevenues,
         arrayEssential, setArrayEssential,
@@ -25,17 +32,30 @@ function MonthDetails() {
         isDataFetched, setIsDataFetched,
         oldYear, setOldYear,
         oldMonth, setOldMonth
-    } = useContext(MonthDetailsContext)
+    } = useContext(MonthDetailsContext);
+
+    const [resultsMonth, setResultsMonth] = useState("R$ 0,00");
 
     useEffect(() => {
-        if (!isDataFetched || oldYear != selectedYear || oldMonth !== month) {
+        if (!isDataFetched || oldYear !== selectedYear || oldMonth !== month) {
             getMonthDetails();
-            getMonthDescription(month)
+            getMonthDescription(month);
             setIsDataFetched(true);
-            setOldMonth(month)
-            setOldYear(selectedYear)
+            setOldMonth(month);
+            setOldYear(selectedYear);
         }
-    }, [selectedYear, month, isDataFetched])
+    }, [selectedYear, month, isDataFetched]);
+
+    useEffect(() => {
+        setResultsMonth(calculateResultsMonth());
+    }, [totalRevenues, balanceExpensesEssential, balanceInvestments, balanceExpensesNoEssential]);
+
+    const calculateResultsMonth = () => {
+        var sumExpensesMonth = UtilServices.operationsCurrencies(balanceExpensesEssential, balanceExpensesNoEssential, 'sum');
+        var sumTotalExpenses = UtilServices.operationsCurrencies(balanceInvestments, sumExpensesMonth, 'sum');
+        var totalBalance = UtilServices.operationsCurrencies(totalRevenues, sumTotalExpenses, 'sub');
+        return totalBalance;
+    };
 
     const getMonthDetails = async () => {
         try {
@@ -43,118 +63,119 @@ function MonthDetails() {
             const content = response.data;
 
             if (content && content.revenuesSummaryDTOS) {
-                setArrayRevenues(content.revenuesSummaryDTOS)
+                setArrayRevenues(content.revenuesSummaryDTOS);
             }
 
             if (content && content.creditCardSummaryDTOS) {
-                setArrayCreditCard(content.creditCardSummaryDTOS)
+                setArrayCreditCard(content.creditCardSummaryDTOS);
             }
 
             if (content && content.investmentsSummaryDTOS && content.budgetedSummaryDTOS) {
                 var investmentsSummaryList = buildBudgetedXAccomplished(
-                    content.budgetedSummaryDTOS[0].withoutClassification,
-                    content.investmentsSummaryDTOS)
-                setArrayInvestments(investmentsSummaryList)
+                    content.budgetedSummaryDTOS[0]?.withoutClassification,
+                    content.investmentsSummaryDTOS
+                );
+                setArrayInvestments(investmentsSummaryList);
                 setValuePercentsInvestiments(buildValuesPercent(
                     investmentsSummaryList.totalBudgeted,
                     investmentsSummaryList.totalAccomplished
-                ))
+                ));
             }
 
-
             if (content && content.expenseSummaryDTOS && content.budgetedSummaryDTOS) {
+                var essentialSumSummaryList = "R$ 0,00";
+                var nonEssentialSumSumSummaryList = "R$ 0,00";
+
                 content.expenseSummaryDTOS.forEach(element => {
-                    var essentialSumSummaryList = buildBudgetedXAccomplished(
-                        content.budgetedSummaryDTOS[0].essentialSum,
-                        element.essentialSum)
-                    setArrayEssential(essentialSumSummaryList)
+                    essentialSumSummaryList = buildBudgetedXAccomplished(
+                        content.budgetedSummaryDTOS[0]?.essentialSum,
+                        element.essentialSum
+                    );
+                    setArrayEssential(essentialSumSummaryList);
                     setValuePercentsEssentials(buildValuesPercent(
                         essentialSumSummaryList.totalBudgeted,
                         essentialSumSummaryList.totalAccomplished
-                    ))
+                    ));
 
-                    var nonEssentialSumSumSummaryList = buildBudgetedXAccomplished(
-                        content.budgetedSummaryDTOS[0].nonEssentialSum,
-                        element.nonEssentialSum)
-                    setArrayNoEssential(nonEssentialSumSumSummaryList)
+                    nonEssentialSumSumSummaryList = buildBudgetedXAccomplished(
+                        content.budgetedSummaryDTOS[0]?.nonEssentialSum,
+                        element.nonEssentialSum
+                    );
+                    setArrayNoEssential(nonEssentialSumSumSummaryList);
                     setValuePercentsNonEssentials(buildValuesPercent(
                         nonEssentialSumSumSummaryList.totalBudgeted,
                         nonEssentialSumSumSummaryList.totalAccomplished
-                    ))
-                })
+                    ));
+                });
             }
-
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 
     function getMonthDescription(code) {
-        var months = UtilServices.getListMonths()
+        var months = UtilServices.getListMonths();
         for (let i = 0; i < months.length; i++) {
             if (months[i].cod == code) {
-                setMonthDescription(months[i].description)
+                setMonthDescription(months[i].description);
+                break;
             }
         }
-        return null;
     }
 
     function buildBudgetedXAccomplished(budgetedList, objList) {
-        var resultArray = []
+        var resultArray = [];
+        var totalBudgeted = "R$ 0,00";
+        var totalAccomplished = "R$ 0,00";
 
-        var totalBudgeted = "R$ 0,00"
-        var totalAccomplished = "R$ 0,00"
-
-        objList.forEach(item => {
-
+        objList?.forEach(item => {
             var obj = {
                 description: item.description,
                 budgeted: null,
                 accomplished: item.sum
-            }
-            resultArray.push(obj)
-            totalAccomplished = UtilServices.operationsCurrencies(totalAccomplished, item.sum, 'sum')
-        })
+            };
+            resultArray.push(obj);
+            totalAccomplished = UtilServices.operationsCurrencies(totalAccomplished, item.sum, 'sum');
+        });
 
-        budgetedList.forEach(element => {
-            var hasItem = resultArray.some(ite => ite.description === element.description)
+        budgetedList?.forEach(element => {
+            var hasItem = resultArray.some(ite => ite.description === element.description);
 
             if (hasItem) {
                 let item = resultArray.find(result => result.description === element.description);
-                item.budgeted = element.sum
+                item.budgeted = element.sum;
             } else {
                 var obj = {
                     description: element.description,
                     budgeted: element.sum,
                     accomplished: null
-                }
-                resultArray.push(obj)
+                };
+                resultArray.push(obj);
             }
-            totalBudgeted = UtilServices.operationsCurrencies(totalBudgeted, element.sum, 'sum')
+            totalBudgeted = UtilServices.operationsCurrencies(totalBudgeted, element.sum, 'sum');
         });
-
-        setTotalExpenses(UtilServices.operationsCurrencies(totalBudgeted, totalAccomplished, 'sum'))
+    
+        setTotalExpenses(UtilServices.operationsCurrencies(totalBudgeted, totalAccomplished, 'sum'));
 
         var total = {
             totalBudgeted: totalBudgeted,
             totalAccomplished: totalAccomplished,
             array: resultArray
-        }
-        return total
+        };
+        return total;
     }
 
-    function buildValuesPercent(totalBudgeted,totalAccomplished) {
-        
-        var perBudgeted =UtilServices.calculatePercentage(totalBudgeted,totalRevenues)
-        var perAccomplished = UtilServices.calculatePercentage(totalAccomplished,totalRevenues)
-      var balance = (perBudgeted - perAccomplished).toFixed(2)
-        perBudgeted = perBudgeted.toFixed(2)
-        perAccomplished = perAccomplished.toFixed(2)
+    function buildValuesPercent(totalBudgeted, totalAccomplished) {
+        var perBudgeted = UtilServices.calculatePercentage(totalBudgeted, totalRevenues);
+        var perAccomplished = UtilServices.calculatePercentage(totalAccomplished, totalRevenues);
+        var balance = (perBudgeted - perAccomplished).toFixed(2);
+        perBudgeted = perBudgeted.toFixed(2);
+        perAccomplished = perAccomplished.toFixed(2);
         return {
-            budgeted:perBudgeted,
-            accomplished:perAccomplished,
-            balance:balance
-        }
+            budgeted: perBudgeted,
+            accomplished: perAccomplished,
+            balance: balance
+        };
     }
 
     return (
@@ -171,36 +192,44 @@ function MonthDetails() {
                     <span className=' text-sm text-black'>Resultados</span>
                         <div className='flex flex-row gap-5'>
                             <div className='font-bold text-sm text-black'>
-                                <table class="w-full border-collapse">
+                                <table className="w-full border-collapse">
                                     <tbody>
                                         <tr>
-                                            <td class="text-black text-left p-1 w-40">Receitas:</td>
-                                            <td class="text-black px-1 text-right">{totalRevenues}</td>
+                                            <td className="text-black text-left p-1 w-40">Receitas:</td>
+                                            <td className="text-black px-1 text-right">{totalRevenues}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-black text-left p-1 w-40">Despesas:</td>
-                                            <td class="text-black px-1 text-right">{totalExpenses}</td>
+                                            <td className="text-black text-left p-1 w-40">Despesas:</td>
+                                            <td className="text-black px-1 text-right">
+                                                {balanceExpensesEssential && balanceExpensesNoEssential &&
+                                                    UtilServices.operationsCurrencies(balanceExpensesEssential, balanceExpensesNoEssential, 'sum')
+                                                }
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-black text-left p-1 w-40">Saldo mês:</td>
-                                            <td class="text-black px-1 text-right">
-                                                {UtilServices.operationsCurrencies(totalRevenues, totalExpenses, 'sub')}
+                                            <td className="text-black text-left p-1 w-40">Investimentos:</td>
+                                            <td className="text-black px-1 text-right">{balanceInvestments}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="text-black text-left p-1 w-40">Saldo mês:</td>
+                                            <td className="text-black px-1 text-right">
+                                                {resultsMonth}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div className="flex items-center justify-center ">
+                            <div className="flex items-center justify-center">
                                 <div className="border-l border-black" style={{ height: '70px', width: '2px' }}></div>
                             </div>
                             <div className='font-bold text-sm text-black'>
-                                <table class="w-full border-collapse ">
+                                <table className="w-full border-collapse">
                                     <thead>
                                         <tr>
-                                            <th class="text-black text-left p-1 w-40">Descrição</th>
-                                            <th class="text-black text-left px-3">Orçado</th>
-                                            <th class="text-black text-left px-3">Realizado</th>
-                                            <th class="text-black text-left px-3">Saldo</th>
+                                            <th className="text-black text-left p-1 w-40">Descrição</th>
+                                            <th className="text-black text-left px-3">Orçado</th>
+                                            <th className="text-black text-left px-3">Realizado</th>
+                                            <th className="text-black text-left px-3">Saldo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -223,14 +252,10 @@ function MonthDetails() {
             <div id='div2' className='flex flex-col items-center  w-1/2 p-1 bg-white dark:bg-gray-200 rounded-lg'>
                 <span className='font-bold text-xl text-black'>Despesas</span>
                 <div className='flex gap-1 pb-1 font-semibold text-xs dark:text-gray-200 flex-grow-[1]'>
-                    {
-                        <>
-                            <CardBudgetedAccomplished header={'Essencial'} obj={arrayEssential} bgColor={'bg-red-400'} 
-                                    url={`/month-details/expenses/${selectedYear}/${month}/Essencial`}/>
-                            <CardBudgetedAccomplished header={'Não Essencial'} obj={arrayNoEssential} bgColor={'bg-red-400'} 
-                                    url={`/month-details/expenses/${selectedYear}/${month}/Não Essencial`}/>
-                        </>
-                    }
+                    <CardBudgetedAccomplished header={'Essencial'} obj={arrayEssential} bgColor={'bg-red-400'} 
+                            url={`/month-details/expenses/${selectedYear}/${month}/Essencial`}/>
+                    <CardBudgetedAccomplished header={'Não Essencial'} obj={arrayNoEssential} bgColor={'bg-red-400'} 
+                            url={`/month-details/expenses/${selectedYear}/${month}/Não Essencial`}/>
                 </div>
             </div>
         </div>

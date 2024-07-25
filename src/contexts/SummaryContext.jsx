@@ -18,11 +18,14 @@ export const SummaryProvider = ({ children }) => {
         lineData: { labels: [], datasets: [] },
         lineData_2: { labels: [], datasets: [] },
         barData_3: { labels: [], datasets: [] },
-      });
-      const [years, setYears] = useState([]);
-      const [year, setYear] = useState('');
-      const [reference, setReference] = useState('');
-      const [isDataFetched, setIsDataFetched] = useState(false);
+    });
+    const [years, setYears] = useState([]);
+    const [year, setYear] = useState('');
+    const [reference, setReference] = useState('');
+    const [isDataFetched, setIsDataFetched] = useState(false);
+    const [balanceInvestments, setBalanceInvestments] = useState("R$ 0,00")
+    const [balanceExpensesEssential, setBalanceExpensesEssential] = useState("R$ 0,00")
+    const [balanceExpensesNoEssential, setBalanceExpensesNoEssential] = useState("R$ 0,00")
 
     return (
         <SummaryContext.Provider value={{
@@ -35,11 +38,14 @@ export const SummaryProvider = ({ children }) => {
             categories, setCategories,
             showModalCategory, setShowModalCategory,
             theme, setTheme,
-            chartData, setChartData, 
-            years, setYears, 
-            year, setYear, 
-            reference, setReference, 
-            isDataFetched, setIsDataFetched
+            chartData, setChartData,
+            years, setYears,
+            year, setYear,
+            reference, setReference,
+            isDataFetched, setIsDataFetched,
+            balanceExpensesEssential, setBalanceExpensesEssential,
+            balanceInvestments, setBalanceInvestments,
+            balanceExpensesNoEssential, setBalanceExpensesNoEssential
         }}>
             {children}
         </SummaryContext.Provider>

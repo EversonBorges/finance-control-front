@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import LinkWithPreviousRoute from './LinkWithPreviousRoute';
 import ToggleTheme from './ToggleTheme';
 import { ClipboardDocumentListIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import Drop from './Drop';
@@ -7,12 +8,17 @@ import Drop from './Drop';
 const Navbar = () => {
     return (
         <div>
-            <nav className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 flex h-10 sm:h-10 bg-gray-300 dark:bg-dark-200  items-center px-2 fixed w-full'>
+            <nav className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 flex h-10 sm:h-10 bg-gray-300 dark:bg-dark-200  items-center fixed w-full'>
                 <div className='flex justify-start'>
                     <div className='text-white hidden sm:block'>
                         <ul className='uppercase sm:flex hidden text-gray-900 dark:text-gray-100'>
                             <li className='sm:hover:scale-110 '>
                                 <Link to={"/"} className="button-link">Home</Link>
+                            </li>
+                            <li className='sm:hover:scale-110'>
+                                <LinkWithPreviousRoute to="/job-manager" className="button-link">
+                                    Job
+                                </LinkWithPreviousRoute>
                             </li>
                             <li className='sm:hover:scale-110 '>
                                 <Link to={"/summary"} className="button-link">Summary</Link>

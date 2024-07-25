@@ -98,14 +98,13 @@ function ModalExpenses(props) {
     }
 
     const onSubmit = async (values) => {
-        values.transactionDate = new Date(values.transactionDate).toLocaleDateString('pt-BR');
 
         const request = {
             id: values.id,
             establishment: values.establishment,
             quantityInstallments: values.quantityInstallments,
             valuesInstallment: values.valuesInstallment,
-            transactionDate: values.transactionDate,
+            transactionDate: UtilServices.formatterDate(values.transactionDate),
             paymentMethods: values.paymentMethods,
             category: {
                 id: values.category

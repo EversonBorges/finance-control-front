@@ -13,6 +13,8 @@ import ModalCreditCard from './Routes/summary/summaryMonth/creditCard/ModalCredi
 import ModalCategory from './Routes/summary/summaryMonth/category/ModalCategory.jsx'
 import ModalTransactions from './Routes/summary/summaryMonth/ModalTransactions.jsx'
 import MyChart from './graphics/MyChart.jsx'
+import ModalJobManager from './Routes/summary/summaryMonth/ModalJobManager.jsx'
+import { PreviousRouteProvider } from './contexts/PreviousRouteContext.jsx'
 
 const router = createBrowserRouter([{
     element: <App />,
@@ -64,6 +66,10 @@ const router = createBrowserRouter([{
       {
         path: "/transactions",
         element: <ModalTransactions show={true}/>
+      },
+      {
+        path: "/job-manager",
+        element: <ModalJobManager show={true}/>
       }
     ]
   }
@@ -71,6 +77,8 @@ const router = createBrowserRouter([{
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   //<React.StrictMode>
+  <PreviousRouteProvider>
     <RouterProvider router={router}/>
+  </PreviousRouteProvider>
  // </React.StrictMode>,
 )
